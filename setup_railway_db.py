@@ -15,15 +15,20 @@ load_dotenv()
 def get_db_connection():
     """Connect to Railway MySQL database"""
     try:
+        # Use Railway internal connection for Railway services
+        # For local development, use the public URL
         connection = mysql.connector.connect(
-            host=os.getenv('DB_HOST'),
-            user=os.getenv('DB_USER'),
-            password=os.getenv('DB_PASSWORD'),
-            database=os.getenv('DB_NAME')
+            host=os.getenv('DB_HOST', 'mysql.railway.internal'),
+            user=os.getenv('DB_USER', 'root'),
+            password=os.getenv('DB_PASSWORD', 'QJAklEaRgLuequxVOlMGRUKwZGCcMIwa'),
+            database=os.getenv('DB_NAME', 'railway'),
+            port=int(os.getenv('DB_PORT', '3306'))
         )
         return connection
     except Error as e:
         print(f"Database connection error: {e}")
+        print("If connecting from local machine, try using the Railway public URL:")
+        print("Set DB_HOST=junction.proxy.rlwy.net and DB_PORT=37430 in your .env file")
         return None
 
 def initialize_database():

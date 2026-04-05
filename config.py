@@ -14,6 +14,7 @@ class Config:
     DB_USER = os.getenv('DB_USER', 'root')
     DB_PASSWORD = os.getenv('DB_PASSWORD', '')
     DB_NAME = os.getenv('DB_NAME', 'srms_db')
+    DB_PORT = int(os.getenv('DB_PORT', '3306'))
 
     # Admin
     ADMIN_REGISTRATION_KEY = os.getenv('ADMIN_REGISTRATION_KEY', 'CHANGE_THIS_IN_PRODUCTION')
