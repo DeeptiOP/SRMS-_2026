@@ -53,6 +53,11 @@ def initialize_database():
             if statement and not statement.startswith('--'):
                 try:
                     cursor.execute(statement)
+                    # Consume any results to avoid "unread result" errors
+                    try:
+                        cursor.fetchall()
+                    except:
+                        pass  # No results to fetch
                     print(f"✅ Executed: {statement[:50]}...")
                 except Error as e:
                     print(f"⚠️  Warning: {e}")
@@ -62,14 +67,18 @@ def initialize_database():
 
         # Create default admin user
         try:
-            hashed_password = 'pbkdf2:sha256:600000$your_salt_here$your_hash_here'  # This will be replaced by proper hashing
-            cursor.execute("""
-                INSERT INTO users (username, password, email, course, year, department, is_admin)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-                ON DUPLICATE KEY UPDATE username=username
-            """, ('admin', hashed_password, 'admin@srms.com', '', '', '', 1))
-            connection.commit()
-            print("✅ Default admin user created (username: admin, password: admin123)")
+            # First check if admin exists
+            cursor.execute("SELECT id FROM users WHERE username='admin' AND is_admin=1")
+            if not cursor.fetchone():
+                hashed_password = 'pbkdf2:sha256:600000$your_salt_here$your_hash_here'  # This will be replaced by proper hashing
+                cursor.execute("""
+                    INSERT INTO users (username, password, email, course, year, department, is_admin)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """, ('admin', hashed_password, 'admin@srms.com', '', '', '', 1))
+                connection.commit()
+                print("✅ Default admin user created (username: admin, password: admin123)")
+            else:
+                print("ℹ️  Admin user already exists")
         except Error as e:
             print(f"⚠️  Admin user creation warning: {e}")
 
