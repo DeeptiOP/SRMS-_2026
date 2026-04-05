@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Student - SRMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--box-shadow);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+        input[type="text"], input[type="email"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            box-sizing: border-box;
+            transition: var(--transition);
+            background: #f8fafc;
+        }
+        input[type="text"]:focus, input[type="email"]:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        input[type="text"]:disabled {
+            background: #e9ecef;
+            color: #666;
+            cursor: not-allowed;
+        }
+        .info-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--primary-color);
+            color: #1e40af;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <button class="sidebar-toggle" id="sidebarToggle" title="Toggle Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="navbar-title">✏️ Edit Student</h1>
+            </div>
+            <div class="navbar-links">
+                <span class="admin-user-info">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin Panel</span>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2 class="sidebar-title">Admin Panel</h2>
+            </div>
+
+            <nav class="sidebar-nav">
+                <!-- Dashboard Section -->
+                <div class="nav-section">
+                    <h3 class="nav-section-title">📊 Dashboard</h3>
+                    <ul class="nav-list">
+                        <li>
+                            <a href="{{ url_for('admin') }}" class="nav-item">
+                                <i class="fas fa-home"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Academic Management Section -->
+                <div class="nav-section">
+                    <h3 class="nav-section-title">📚 Academic</h3>
+                    <ul class="nav-list">
+                        <li>
+                            <a href="{{ url_for('classes') }}" class="nav-item">
+                                <i class="fas fa-layer-group"></i>
+                                <span>Classes</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('subjects') }}" class="nav-item">
+                                <i class="fas fa-book"></i>
+                                <span>Subjects</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('class_subjects') }}" class="nav-item">
+                                <i class="fas fa-link"></i>
+                                <span>Class-Subject Map</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Student Management Section -->
+                <div class="nav-section">
+                    <h3 class="nav-section-title">👥 Students</h3>
+                    <ul class="nav-list">
+                        <li>
+                            <a href="{{ url_for('admin') }}" class="nav-item">
+                                <i class="fas fa-users"></i>
+                                <span>Student List</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('marks') }}" class="nav-item">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Marks Management</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Communications Section -->
+                <div class="nav-section">
+                    <h3 class="nav-section-title">📢 Communications</h3>
+                    <ul class="nav-list">
+                        <li>
+                            <a href="{{ url_for('add_notice') }}" class="nav-item">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>Post Notice</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('notices') }}" class="nav-item">
+                                <i class="fas fa-bell"></i>
+                                <span>View Notices</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Account Section -->
+                <div class="nav-section">
+                    <h3 class="nav-section-title">⚙️ Account</h3>
+                    <ul class="nav-list">
+                        <li>
+                            <a href="{{ url_for('profile') }}" class="nav-item">
+                                <i class="fas fa-user-circle"></i>
+                                <span>My Profile</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('change_password') }}" class="nav-item">
+                                <i class="fas fa-key"></i>
+                                <span>Change Password</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('logout') }}" class="nav-item nav-logout">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h2>✏️ Edit Student Information</h2>
+
+            <!-- Flash messages -->
+            {% if msg %}
+                {% if 'successfully' in msg %}
+                    <div class="alert alert-success">✅ {{ msg }}</div>
+                {% else %}
+                    <div class="alert alert-danger">❌ {{ msg }}</div>
+                {% endif %}
+            {% endif %}
+
+            <div class="form-section">
+                <div class="info-box">
+                    <strong>👤 Student Username:</strong> {{ student['username'] }}
+                </div>
+
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="roll_number">📍 Roll Number:</label>
+                        <input type="text" id="roll_number" name="roll_number" value="{{ student['roll_number'] or '' }}" required placeholder="Enter roll number">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">📧 Email:</label>
+                        <input type="email" id="email" name="email" value="{{ student['email'] }}" required placeholder="Enter email address">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="course">📚 Course:</label>
+                        <input type="text" id="course" name="course" value="{{ student['course'] or '' }}" required placeholder="Enter course name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="year">📅 Year:</label>
+                        <input type="text" id="year" name="year" value="{{ student['year'] or '' }}" placeholder="e.g., 1st Year, 2nd Year" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="department">🏢 Department:</label>
+                        <input type="text" id="department" name="department" value="{{ student['department'] or '' }}" required placeholder="Enter department">
+                    </div>
+
+                    <div style="margin-top: 30px;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Update Student
+                        </button>
+                        <a href="{{ url_for('admin') }}" class="btn btn-secondary" style="margin-left: 10px;">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p><strong>Hi-Tech Institute of Technology</strong></p>
+            <p>Address: Behind Reliance Petrol Pump, Near Industrial Estate Khordha, District: Khordha, Odisha, PIN: 752057.</p>
+            <p>Email: <a href="mailto:info@hit.ac.in">info@hit.ac.in</a></p>
+            <p>All rights reserved © Hi-Tech College CSE major project.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Sidebar toggle functionality
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+        });
+
+        // Close sidebar when a link is clicked (on mobile)
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

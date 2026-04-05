@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - SRMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='search_result.css') }}">
+    <style>
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .search-form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        .form-group label {
+            font-weight: bold;
+            display: block;
+        }
+        .form-group input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            flex: 1;
+            max-width: 300px;
+        }
+        .btn-search {
+            background: #007bff;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-search:hover {
+            background: #0056b3;
+        }
+        .alert {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .student-info {
+            background: #f0f8ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #007bff;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .info-item {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .info-value {
+            color: #666;
+        }
+        .results-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        table th {
+            background: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+        table tr:hover {
+            background: #f5f5f5;
+        }
+        .back-link {
+            margin-bottom: 20px;
+        }
+        .back-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .marks-summary {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="back-link">
+            <a href="{% if session.get('is_admin') %}{{ url_for('admin') }}{% else %}{{ url_for('dashboard') }}{% endif %}">← Back</a>
+        </div>
+        
+        <h1>Search Student Results</h1>
+        
+        <div class="search-form">
+            <form method="POST">
+                <div class="form-group">
+                    <label for="roll_number">Enter Roll Number:</label>
+                    <input type="text" id="roll_number" name="roll_number" placeholder="e.g., 001" value="{{ request.form.get('roll_number', '') }}" required>
+                    <button type="submit" class="btn-search">Search</button>
+                </div>
+            </form>
+        </div>
+        
+        {% if msg %}
+            {% if 'successfully' in msg or 'found' in msg.lower() %}
+                <div class="alert alert-info">{{ msg }}</div>
+            {% else %}
+                <div class="alert alert-danger">{{ msg }}</div>
+            {% endif %}
+        {% endif %}
+        
+        {% if student %}
+            <div class="student-info">
+                <h2>Student Information</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Name</div>
+                        <div class="info-value">{{ student['username'] }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Roll Number</div>
+                        <div class="info-value">{{ student['roll_number'] or 'N/A' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Email</div>
+                        <div class="info-value">{{ student['email'] }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Course</div>
+                        <div class="info-value">{{ student['course'] or 'N/A' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Year</div>
+                        <div class="info-value">{{ student['year'] or 'N/A' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Department</div>
+                        <div class="info-value">{{ student['department'] or 'N/A' }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            {% if results %}
+                <div class="results-section">
+                    <h2>Results</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Marks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for subject, marks in results.items() %}
+                                <tr>
+                                    <td>{{ subject }}</td>
+                                    <td>{{ marks }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="no-results">
+                    <p>This student has not yet received any marks.</p>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p><strong>Hi-Tech Institute of Technology</strong></p>
+            <p>Address: Behind Reliance Petrol Pump, Near Industrial Estate Khordha, District: Khordha, Odisha, PIN: 752057.</p>
+            <p>Email: <a href="mailto:info@hit.ac.in">info@hit.ac.in</a></p>
+            <p>All rights reserved © Hi-Tech College CSE major project.</p>
+        </div>
+    </footer>
+</body>
+</html>

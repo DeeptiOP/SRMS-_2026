@@ -1,0 +1,10 @@
+@import url('admin.css');
+
+/* Edit student page overrides */
+.form-card {
+    max-width: 720px;
+}
+
+.edit-controls {
+    margin-top: 1.5rem;
+}

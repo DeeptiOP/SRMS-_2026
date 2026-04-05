@@ -1,0 +1,11 @@
+@import url('admin.css');
+
+/* Class subjects page overrides */
+.subjects-list {
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+.subjects-card {
+    border-radius: 18px;
+}

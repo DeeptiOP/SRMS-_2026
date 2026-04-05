@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Registration - SRMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin_register.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>👨‍💼 Admin Registration</h1>
+        <div class="auth-box">
+            <p>Create an admin account for managing the system</p>
+
+            {% if msg %}
+                {% if 'successfully' in msg.lower() %}
+                    <div class="alert alert-success">{{ msg }}</div>
+                {% elif 'error' in msg.lower() or 'invalid' in msg.lower() or 'already' in msg.lower() %}
+                    <div class="alert alert-danger">{{ msg }}</div>
+                {% else %}
+                    <div class="alert alert-warning">{{ msg }}</div>
+                {% endif %}
+            {% endif %}
+
+            <form method="post" class="form">
+                <div class="form-group">
+                    <label for="username">👤 Username:</label>
+                    <input type="text" id="username" name="username" required placeholder="Choose an admin username">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">📧 Email:</label>
+                    <input type="email" id="email" name="email" required placeholder="Enter admin email">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">🔐 Password:</label>
+                    <input type="password" id="password" name="password" required placeholder="Min 6 characters">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">🔐 Confirm Password:</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required placeholder="Confirm your password">
+                </div>
+
+                <div class="form-group">
+                    <label for="admin_key">🔑 Admin Registration Key:</label>
+                    <input type="password" id="admin_key" name="admin_key" required placeholder="Enter the admin registration key">
+                    <small>Ask your system administrator for the registration key</small>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Register as Admin</button>
+            </form>
+
+            <div class="auth-links">
+                <p>Already have an account? <a href="{{ url_for('index') }}" class="link">Login here</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

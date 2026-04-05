@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  srms:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - DB_HOST=mysql
+      - DB_USER=srms_user
+      - DB_PASSWORD=secure_password_change_this
+      - DB_NAME=srms_db
+      - SECRET_KEY=your-super-secret-key-here
+      - WTF_CSRF_SECRET_KEY=csrf-secret-key-here
+      - ADMIN_REGISTRATION_KEY=SECURE_ADMIN_KEY_2024
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:5000')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=srms_db
+      - MYSQL_USER=srms_user
+      - MYSQL_PASSWORD=secure_password_change_this
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./setup_database.sql:/docker-entrypoint-initdb.d/setup_database.sql
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+volumes:
+  mysql_data:

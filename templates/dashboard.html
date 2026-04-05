@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - SRMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <h1 class="navbar-title">📚 SRMS Dashboard</h1>
+            <div class="navbar-links">
+                <a href="{{ url_for('notices') }}" class="nav-link">📢 Notices</a>
+                <a href="{{ url_for('search_result') }}" class="nav-link">🔍 Search Results</a>
+                <a href="{{ url_for('profile') }}" class="nav-link">👤 Profile</a>
+                <a href="{{ url_for('logout') }}" class="nav-link logout-link">🚪 Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <header>
+            <h2>Welcome, {{ username }}! 👋</h2>
+            <p>Your Academic Performance Dashboard</p>
+        </header>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <h3 class="section-title">👤 Profile Information</h3>
+        <section class="user-info">
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="label">Username</span>
+                    <span class="value">{{ username }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Email</span>
+                    <span class="value">{{ email }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Course</span>
+                    <span class="value">{{ course }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Year</span>
+                    <span class="value">{{ year }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Department</span>
+                    <span class="value">{{ department }}</span>
+                </div>
+            </div>
+        </section>
+
+        <h3 class="section-title">📊 Your Marks</h3>
+        <section class="results">
+            {% if results %}
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>📖 Subject</th>
+                            <th>📝 Marks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for subject, marks in results.items() %}
+                        <tr>
+                            <td>{{ subject }}</td>
+                            <td class="marks-value">{{ marks }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="no-data">No marks have been assigned yet. Please contact your admin.</p>
+            {% endif %}
+        </section>
+
+        <h3 class="section-title">📈 Performance Summary</h3>
+        <section class="summary">
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span class="summary-label">Total Marks</span>
+                    <span class="summary-value">{{ total_marks }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Number of Subjects</span>
+                    <span class="summary-value">{{ num_subjects }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Percentage</span>
+                    <span class="summary-value">{{ percentage }}%</span>
+                </div>
+                <div class="summary-item grade-badge">
+                    <span class="summary-label">Grade</span>
+                    <span class="grade-value">{{ grade }}</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p><strong>Hi-Tech Institute of Technology</strong></p>
+            <p>Address: Behind Reliance Petrol Pump, Near Industrial Estate Khordha, District: Khordha, Odisha, PIN: 752057.</p>
+            <p>Email: <a href="mailto:info@hit.ac.in">info@hit.ac.in</a></p>
+            <p>All rights reserved © Hi-Tech College CSE major project.</p>
+        </div>
+    </footer>
+</body>
+</html>

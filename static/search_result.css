@@ -1,0 +1,11 @@
+@import url('marks.css');
+
+/* Search result page overrides */
+.results-container {
+    max-width: 1140px;
+    margin: 0 auto;
+}
+
+.search-result-panel {
+    border-radius: 20px;
+}

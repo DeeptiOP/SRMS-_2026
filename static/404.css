@@ -1,0 +1,23 @@
+@import url('styles.css');
+
+/* 404 error page styling */
+.error-container {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.error-content {
+    max-width: 620px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.error-content h1 {
+    font-size: 5rem;
+}
+
+.error-content p {
+    color: #475569;
+}

@@ -1,0 +1,11 @@
+@import url('styles.css');
+
+/* Admin register page overrides */
+.auth-box {
+    max-width: 560px;
+    margin: 0 auto;
+}
+
+.auth-box h2 {
+    color: #2c3e50;
+}

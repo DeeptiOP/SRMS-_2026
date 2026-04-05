@@ -1,0 +1,11 @@
+@import url('admin.css');
+
+/* Subjects page overrides */
+.subjects-panel {
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+.subject-card {
+    border-radius: 18px;
+}

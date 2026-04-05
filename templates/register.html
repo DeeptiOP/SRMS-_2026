@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration - SRMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='register.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>📋 Student Registration</h1>
+        <div class="auth-box">
+            <p>Create your student account</p>
+
+            {% if msg %}
+                {% if 'successfully' in msg.lower() %}
+                    <div class="alert alert-success">{{ msg }}</div>
+                {% elif 'error' in msg.lower() or 'required' in msg.lower() or 'already' in msg.lower() %}
+                    <div class="alert alert-danger">{{ msg }}</div>
+                {% else %}
+                    <div class="alert alert-warning">{{ msg }}</div>
+                {% endif %}
+            {% endif %}
+
+            <form method="post" class="form">
+                <div class="form-group">
+                    <label for="roll_number">🎫 Roll Number:</label>
+                    <input type="text" id="roll_number" name="roll_number" required placeholder="e.g., STU001, 001">
+                </div>
+
+                <div class="form-group">
+                    <label for="username">👤 Username:</label>
+                    <input type="text" id="username" name="username" required placeholder="Choose a username">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">📧 Email:</label>
+                    <input type="email" id="email" name="email" required placeholder="Enter your email">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">🔐 Password:</label>
+                    <input type="password" id="password" name="password" required placeholder="Min 6 characters">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">🔐 Confirm Password:</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required placeholder="Confirm your password">
+                </div>
+
+                <div class="form-group">
+                    <label for="course">📚 Course:</label>
+                    <input type="text" id="course" name="course" required placeholder="e.g., B.Tech, BE">
+                </div>
+
+                <div class="form-group">
+                    <label for="year">📅 Year:</label>
+                    <select id="year" name="year" required>
+                        <option value="">Select Year</option>
+                        <option value="1st">1st Year</option>
+                        <option value="2nd">2nd Year</option>
+                        <option value="3rd">3rd Year</option>
+                        <option value="4th">4th Year</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="department">🏢 Department:</label>
+                    <select id="department" name="department" required>
+                        <option value="">Select Department</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Mechanical">Mechanical</option>
+                        <option value="Civil">Civil</option>
+                        <option value="Electrical">Electrical</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Register</button>
+            </form>
+
+            <div class="auth-links">
+                <p>Already have an account? <a href="{{ url_for('index') }}" class="link">Login here</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

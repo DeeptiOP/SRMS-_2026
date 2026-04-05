@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Error - SRMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='500.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="error-box">
+            <h1 style="font-size: 4rem; color: #ff6b6b;">500</h1>
+            <h2>Server Error</h2>
+            <p>Sorry! An unexpected error occurred on the server.</p>
+            <p>Our team has been notified and is working to fix the issue.</p>
+
+            <div class="error-actions">
+                <a href="{{ url_for('index') }}" class="btn btn-primary">🏠 Go to Home</a>
+                <a href="javascript:history.back()" class="btn btn-secondary">⬅️ Go Back</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p><strong>Hi-Tech Institute of Technology</strong></p>
+            <p>Address: Behind Reliance Petrol Pump, Near Industrial Estate Khordha, District: Khordha, Odisha, PIN: 752057.</p>
+            <p>Email: <a href="mailto:info@hit.ac.in">info@hit.ac.in</a></p>
+            <p>All rights reserved © Hi-Tech College CSE major project.</p>
+        </div>
+    </footer>
+</body>
+</html>

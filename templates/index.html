@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRMS - Student Result Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-graduation-cap"></i> STUDENT RESULT MANAGEMENT SYSTEM</h1>
+        <p>An elegant dashboard for students and admins to search results, log in, and access academic data instantly.</p>
+    </div>
+
+    <div class="split-container">
+        <div class="panel search-panel active" id="searchPanel">
+            <h2 class="panel-title"><i class="fas fa-search"></i> Search Results</h2>
+            <p class="panel-subtitle">Search by roll number to view student records, results, and academic details quickly.</p>
+
+            <div class="search-form">
+                <form method="POST" id="searchForm">
+                    <div class="form-group">
+                        <label for="roll_number"><i class="fas fa-id-card"></i> Roll Number</label>
+                        <input type="text" id="roll_number" name="roll_number" placeholder="e.g., STU001" required>
+                    </div>
+                    <button type="submit" class="btn-search"><i class="fas fa-search"></i> Search Results</button>
+                </form>
+            </div>
+
+            <div class="alert alert-danger" id="searchAlert"></div>
+            <div class="alert alert-info" id="successAlert"></div>
+
+            <div class="student-info" id="studentInfo">
+                <h3><i class="fas fa-user-graduate"></i> Student Information</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label"><i class="fas fa-user"></i> Name</div>
+                        <div class="info-value" id="studentName">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label"><i class="fas fa-id-badge"></i> Roll Number</div>
+                        <div class="info-value" id="studentRoll">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label"><i class="fas fa-envelope"></i> Email</div>
+                        <div class="info-value" id="studentEmail">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label"><i class="fas fa-book"></i> Course</div>
+                        <div class="info-value" id="studentCourse">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label"><i class="fas fa-calendar-alt"></i> Year</div>
+                        <div class="info-value" id="studentYear">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label"><i class="fas fa-building"></i> Department</div>
+                        <div class="info-value" id="studentDept">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="results-section" id="resultsSection">
+                <h3><i class="fas fa-chart-bar"></i> Academic Results</h3>
+                <table id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Marks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsBody"></tbody>
+                </table>
+            </div>
+
+            <p class="panel-hint"><i class="fas fa-hand-pointer"></i> Tap or click the login panel to switch to authentication.</p>
+        </div>
+
+        <div class="panel shadowed" id="loginPanel">
+            <h2 class="panel-title"><i class="fas fa-sign-in-alt"></i> Login</h2>
+            <p class="panel-subtitle">Use your student or admin credentials to access your secure dashboard.</p>
+
+            <div class="dialog-toggle">
+                <button type="button" class="toggle-btn active" id="studentToggle" onclick="toggleRole('student')"><i class="fas fa-user-graduate"></i> Student</button>
+                <button type="button" class="toggle-btn" id="adminToggle" onclick="toggleRole('admin')"><i class="fas fa-user-shield"></i> Admin</button>
+            </div>
+
+            <div class="flash-message alert alert-danger" id="flushMessages">
+                {% with messages = get_flashed_messages(category_filter=["error", "danger", "warning", "success"]) %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <p>{{ message }}</p>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+            <form action="/index" method="post" class="form show" id="loginForm">
+                <input type="hidden" id="roleInput" name="role" value="student">
+                <div class="form-group">
+                    <label for="username"><i class="fas fa-user"></i> Username</label>
+                    <input type="text" id="username" name="username" required placeholder="Enter your username">
+                </div>
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Enter your password">
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Login</button>
+            </form>
+
+            <div class="auth-links">
+                <p><i class="fas fa-user-plus"></i><a href="{{ url_for('register') }}">New student? Register here</a></p>
+                <p><i class="fas fa-cog"></i><a href="{{ url_for('admin_register') }}">Want to be an admin? Register here</a></p>
+            </div>
+
+            <p class="panel-hint"><i class="fas fa-arrow-left"></i> Switch back to search by clicking the other panel.</p>
+        </div>
+    </div>
+
+    <script>
+        const searchPanel = document.getElementById('searchPanel');
+        const loginPanel = document.getElementById('loginPanel');
+        const searchForm = document.getElementById('searchForm');
+        const roleInput = document.getElementById('roleInput');
+        const studentToggle = document.getElementById('studentToggle');
+        const adminToggle = document.getElementById('adminToggle');
+
+        function activatePanel(panel) {
+            if (panel === 'search') {
+                searchPanel.classList.add('active');
+                searchPanel.classList.remove('shadowed');
+                loginPanel.classList.remove('active');
+                loginPanel.classList.add('shadowed');
+            } else {
+                loginPanel.classList.add('active');
+                loginPanel.classList.remove('shadowed');
+                searchPanel.classList.remove('active');
+                searchPanel.classList.add('shadowed');
+            }
+        }
+
+        searchPanel.addEventListener('click', function(e) {
+            if (!e.target.closest('input, button, a')) {
+                activatePanel('search');
+            }
+        });
+
+        loginPanel.addEventListener('click', function(e) {
+            if (!e.target.closest('input, button, a, .toggle-btn')) {
+                activatePanel('login');
+            }
+        });
+
+        function toggleRole(role) {
+            roleInput.value = role;
+            if (role === 'student') {
+                studentToggle.classList.add('active');
+                adminToggle.classList.remove('active');
+            } else {
+                adminToggle.classList.add('active');
+                studentToggle.classList.remove('active');
+            }
+        }
+
+        function showSearchAlert(message, type) {
+            const alertDiv = document.getElementById('searchAlert');
+            if (message) {
+                alertDiv.textContent = message;
+                alertDiv.className = `alert alert-${type} show`;
+            } else {
+                alertDiv.className = 'alert';
+            }
+        }
+
+        function populateStudentInfo(doc) {
+            const studentInfo = doc.querySelector('.student-info');
+            if (!studentInfo) return;
+            const values = Array.from(studentInfo.querySelectorAll('.info-value')).map(el => el.textContent.trim());
+            document.getElementById('studentName').textContent = values[0] || 'N/A';
+            document.getElementById('studentRoll').textContent = values[1] || 'N/A';
+            document.getElementById('studentEmail').textContent = values[2] || 'N/A';
+            document.getElementById('studentCourse').textContent = values[3] || 'N/A';
+            document.getElementById('studentYear').textContent = values[4] || 'N/A';
+            document.getElementById('studentDept').textContent = values[5] || 'N/A';
+            document.getElementById('studentInfo').classList.add('show');
+        }
+
+        function populateResults(doc) {
+            const rows = doc.querySelectorAll('table tbody tr');
+            const tbody = document.getElementById('resultsBody');
+            tbody.innerHTML = '';
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 2) {
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `<td>${cells[0].textContent.trim()}</td><td>${cells[1].textContent.trim()}</td>`;
+                    tbody.appendChild(newRow);
+                }
+            });
+            if (tbody.children.length) {
+                document.getElementById('resultsSection').classList.add('show');
+            }
+        }
+
+        searchForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const rollNumber = document.getElementById('roll_number').value.trim();
+            if (!rollNumber) {
+                showSearchAlert('Please enter a roll number!', 'danger');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('roll_number', rollNumber);
+            try {
+                const response = await fetch('{{ url_for("search_result") }}', {
+                    method: 'POST',
+                    body: formData,
+                });
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const errorMsg = doc.querySelector('.alert-danger')?.textContent.trim();
+                const infoMsg = doc.querySelector('.alert-info')?.textContent.trim();
+                if (errorMsg && errorMsg.toLowerCase().includes('not found')) {
+                    showSearchAlert(errorMsg, 'danger');
+                    document.getElementById('studentInfo').classList.remove('show');
+                    document.getElementById('resultsSection').classList.remove('show');
+                } else {
+                    showSearchAlert('', 'success');
+                    populateStudentInfo(doc);
+                    populateResults(doc);
+                    if (infoMsg && infoMsg.toLowerCase().includes('no marks')) {
+                        document.getElementById('resultsSection').classList.remove('show');
+                        showSearchAlert(infoMsg, 'info');
+                    }
+                }
+            } catch (error) {
+                showSearchAlert('An error occurred. Please try again.', 'danger');
+            }
+        });
+    </script>
+
+    <footer>
+        <div class="footer-content">
+            <p><strong>Hi-Tech Institute of Technology</strong></p>
+            <p>Address: Behind Reliance Petrol Pump, Near Industrial Estate Khordha, District: Khordha, Odisha, PIN: 752057.</p>
+            <p>Email: <a href="mailto:info@hit.ac.in">info@hit.ac.in</a></p>
+            <p>All rights reserved © Hi-Tech College CSE major project.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,15 @@
+@import url('styles.css');
+
+/* Page-specific register overrides */
+.auth-box {
+    max-width: 540px;
+    margin: 0 auto;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}

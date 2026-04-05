@@ -1,0 +1,11 @@
+@import url('admin.css');
+
+/* Classes page overrides */
+.classes-grid {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.classes-card {
+    border-radius: 18px;
+}

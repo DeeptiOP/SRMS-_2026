@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - SRMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <h1 class="navbar-title">👤 My Profile</h1>
+            <div class="navbar-links">
+                {% if session.get('is_admin') %}
+                    <a href="{{ url_for('admin') }}" class="nav-link">👨‍💼 Admin Dashboard</a>
+                {% else %}
+                    <a href="{{ url_for('dashboard') }}" class="nav-link">📊 Dashboard</a>
+                {% endif %}
+                <a href="{{ url_for('logout') }}" class="nav-link logout-link">🚪 Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <header>
+            <h2>Your Profile Information</h2>
+            <p>View your account details</p>
+        </header>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <section class="user-info">
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="label">👤 Username</span>
+                    <span class="value">{{ user.username }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">📧 Email</span>
+                    <span class="value">{{ user.email }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">📚 Course</span>
+                    <span class="value">{{ user.course if user.course else 'N/A' }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">📅 Year</span>
+                    <span class="value">{{ user.year if user.year else 'N/A' }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">🏢 Department</span>
+                    <span class="value">{{ user.department if user.department else 'N/A' }}</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="actions-section" style="margin-top: 30px; text-align: center;">
+            <a href="{{ url_for('change_password') }}" style="display: inline-block; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; margin: 5px;">🔐 Change Password</a>
+        </div>
+
+        <div class="info-box" style="margin-top: 30px;">
+            <p>✅ Account is active and in good standing</p>
+            <p>📞 For any issues, please contact the admin</p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p><strong>Hi-Tech Institute of Technology</strong></p>
+            <p>Address: Behind Reliance Petrol Pump, Near Industrial Estate Khordha, District: Khordha, Odisha, PIN: 752057.</p>
+            <p>Email: <a href="mailto:info@hit.ac.in">info@hit.ac.in</a></p>
+            <p>All rights reserved © Hi-Tech College CSE major project.</p>
+        </div>
+    </footer>
+</body>
+</html>

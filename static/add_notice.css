@@ -1,0 +1,11 @@
+@import url('admin.css');
+
+/* Add notice page overrides */
+.notice-form {
+    max-width: 780px;
+    margin: 0 auto;
+}
+
+.notice-actions {
+    margin-top: 1.5rem;
+}

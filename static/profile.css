@@ -1,0 +1,12 @@
+@import url('dashboard.css');
+
+/* Profile page specific overrides */
+.profile-details {
+    max-width: 860px;
+    margin: 0 auto;
+}
+
+.profile-card {
+    border-radius: 22px;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+}
