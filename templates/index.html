@@ -214,6 +214,7 @@
             }
             const formData = new FormData();
             formData.append('roll_number', rollNumber);
+            formData.append('csrf_token', document.querySelector('input[name="csrf_token"]').value);
             try {
                 const response = await fetch('{{ url_for("search_result") }}', {
                     method: 'POST',

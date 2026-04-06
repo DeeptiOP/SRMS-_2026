@@ -130,28 +130,28 @@
     <script>
         const subjects = {
             "Computer Science": {
-                "1st": ["Discrete Mathematics", "Basic Electrical Electronics", "English", "Basic Mechanical Engineering", "Physics", "Computer Programming"],
-                "2nd": ["Data Structures", "Object Oriented Programming Language", "Digital Logic Design", "Computer Organization And Architecture", "Mathematics II", "Data Communication"],
-                "3rd": ["Operating Systems", "Database Management Systems", "Software Engineering", "Cloud Computing", "Formal Languages and Automata Theory", "Artificial Intelligence And Machine Learning"],
-                "4th": ["Cyber Law And Ethics", "Entrepreneurship Development", "Renewable Power And Generation Systems", "Green Technology", "Internet Of Things", "Minor Project"]
+                "1st Year": ["Discrete Mathematics", "Basic Electrical Electronics", "English", "Basic Mechanical Engineering", "Physics", "Computer Programming"],
+                "2nd Year": ["Data Structures", "Object Oriented Programming Language", "Digital Logic Design", "Computer Organization And Architecture", "Mathematics II", "Data Communication"],
+                "3rd Year": ["Operating Systems", "Database Management Systems", "Software Engineering", "Cloud Computing", "Formal Languages and Automata Theory", "Artificial Intelligence And Machine Learning"],
+                "4th Year": ["Cyber Law And Ethics", "Entrepreneurship Development", "Renewable Power And Generation Systems", "Green Technology", "Internet Of Things", "Minor Project"]
             },
             "Mechanical": {
-                "1st": ["Engineering Mechanics", "Mathematics I", "Engineering Drawing", "CAD", "Manufacturing Technology"],
-                "2nd": ["Thermodynamics", "Fluid Mechanics", "Mechanics of Machines", "Electrical and Electronics", "Workshop Practice"],
-                "3rd": ["Machine Design", "Heat Transfer", "Manufacturing Process", "Metrology", "Theory of Machines"],
-                "4th": ["Automobile Engineering", "Robotics", "Control Systems", "Refrigeration and Air Conditioning", "Power Plant Engineering"]
+                "1st Year": ["Engineering Mechanics", "Mathematics I", "Engineering Drawing", "CAD", "Manufacturing Technology"],
+                "2nd Year": ["Thermodynamics", "Fluid Mechanics", "Mechanics of Machines", "Electrical and Electronics", "Workshop Practice"],
+                "3rd Year": ["Machine Design", "Heat Transfer", "Manufacturing Process", "Metrology", "Theory of Machines"],
+                "4th Year": ["Automobile Engineering", "Robotics", "Control Systems", "Refrigeration and Air Conditioning", "Power Plant Engineering"]
             },
             "Civil": {
-                "1st": ["Engineering Drawing", "Mathematics I", "Engineering Mechanics", "Surveying", "Materials Testing"],
-                "2nd": ["Structural Analysis", "Geotechnical Engineering", "Hydraulics", "Reinforced Concrete Design", "Transportation Engineering"],
-                "3rd": ["Advanced Structural Design", "Foundation Engineering", "Water Resources Engineering", "Environmental Engineering", "Construction Management"],
-                "4th": ["Bridge Engineering", "Earthquake Engineering", "Smart Cities", "Advanced Concrete Technology", "Project Management"]
+                "1st Year": ["Engineering Drawing", "Mathematics I", "Engineering Mechanics", "Surveying", "Materials Testing"],
+                "2nd Year": ["Structural Analysis", "Geotechnical Engineering", "Hydraulics", "Reinforced Concrete Design", "Transportation Engineering"],
+                "3rd Year": ["Advanced Structural Design", "Foundation Engineering", "Water Resources Engineering", "Environmental Engineering", "Construction Management"],
+                "4th Year": ["Bridge Engineering", "Earthquake Engineering", "Smart Cities", "Advanced Concrete Technology", "Project Management"]
             },
             "Electrical": {
-                "1st": ["Basic Electrical", "Mathematics I", "Circuit Theory", "Physics", "Engineering Drawing"],
-                "2nd": ["Electromagnetics", "Electrical Machines I", "Power Systems I", "Analog Electronics", "Network Analysis"],
-                "3rd": ["Power Systems II", "Control Systems", "Electrical Machines II", "Power Electronics", "Utilization of Electrical Energy"],
-                "4th": ["Electrical Machines III", "Power System Protection", "High Voltage Engineering", "Modern Power Systems", "Industrial Control Systems"]
+                "1st Year": ["Basic Electrical", "Mathematics I", "Circuit Theory", "Physics", "Engineering Drawing"],
+                "2nd Year": ["Electromagnetics", "Electrical Machines I", "Power Systems I", "Analog Electronics", "Network Analysis"],
+                "3rd Year": ["Power Systems II", "Control Systems", "Electrical Machines II", "Power Electronics", "Utilization of Electrical Energy"],
+                "4th Year": ["Electrical Machines III", "Power System Protection", "High Voltage Engineering", "Modern Power Systems", "Industrial Control Systems"]
             }
         };
 
@@ -165,11 +165,23 @@
             const subjSelect = document.getElementById('subject');
             subjSelect.innerHTML = '<option value="">-- Select Subject --</option>';
             
-            if(subjects[dept] && subjects[dept][year]) {
-                subjects[dept][year].forEach(subj => {
+            const normalizedYear = normalizeYear(year);
+            const yearKey = subjects[dept] && subjects[dept][year] ? year : normalizedYear;
+
+            if(subjects[dept] && subjects[dept][yearKey]) {
+                subjects[dept][yearKey].forEach(subj => {
                     subjSelect.innerHTML += `<option value="${subj}">${subj}</option>`;
                 });
             }
+        }
+
+        function normalizeYear(year) {
+            const normalized = year.toLowerCase().replace(/\s+/g, '');
+            if (normalized.startsWith('1st')) return '1st Year';
+            if (normalized.startsWith('2nd')) return '2nd Year';
+            if (normalized.startsWith('3rd')) return '3rd Year';
+            if (normalized.startsWith('4th')) return '4th Year';
+            return year;
         }
 
         function deleteMark(markId) {
