@@ -271,16 +271,16 @@
                         <tbody>
                             {% for combination in combinations %}
                             <tr>
-                                <td>{{ combination['class_name'] }}</td>
-                                <td>{{ combination['subject_name'] }}</td>
-                                <td>
+                                <td data-label="Class Name">{{ combination['class_name'] }}</td>
+                                <td data-label="Subject Name">{{ combination['subject_name'] }}</td>
+                                <td data-label="Status">
                                     {% if combination['is_active'] %}
                                         <span class="status-badge status-active">✓ Active</span>
                                     {% else %}
                                         <span class="status-badge status-inactive">✗ Inactive</span>
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td data-label="Actions">
                                     <button class="btn-toggle" onclick="toggleStatus({{ combination['id'] }})" title="Toggle status">
                                         <i class="fas fa-sync-alt"></i> Toggle
                                     </button>
@@ -338,7 +338,8 @@
             fetch(`/class_subjects/${combinationId}/toggle`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
                 }
             })
             .then(response => response.json())

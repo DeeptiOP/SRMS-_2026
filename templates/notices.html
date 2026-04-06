@@ -139,7 +139,8 @@
                 fetch(`/notices/${noticeId}`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
                     }
                 })
                 .then(response => response.json())

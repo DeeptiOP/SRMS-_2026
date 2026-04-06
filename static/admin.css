@@ -535,25 +535,94 @@ footer .footer-content {
 
     .search-form {
         flex-direction: column;
+        gap: 10px;
     }
 
     .search-input {
+        width: 100%;
         min-width: 100%;
+        padding: 12px;
     }
 
+    .search-button {
+        width: 100%;
+    }
+
+    /* Card-based table layout for mobile */
     .students-table {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        display: block;
+        width: 100%;
+        border-collapse: collapse;
     }
 
-    .students-table th,
+    .students-table thead {
+        display: none;
+    }
+
+    .students-table tbody {
+        display: block;
+        width: 100%;
+    }
+
+    .students-table tr {
+        display: block;
+        background: white;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
     .students-table td {
-        padding: 12px 10px;
-        font-size: 0.85rem;
+        display: block;
+        padding: 12px;
+        text-align: right;
+        border-bottom: 1px solid #f1f5f9;
+        position: relative;
+        padding-left: 40%;
+        min-height: 36px;
+    }
+
+    .students-table td:last-child {
+        border-bottom: none;
+    }
+
+    .students-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 12px;
+        font-weight: 700;
+        color: var(--dark-text);
+        font-size: 0.8rem;
+        text-transform: capitalize;
+    }
+
+    .students-table button {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+        margin: 3px 2px;
     }
 
     .btn {
-        padding: 8px 12px;
+        padding: 10px 12px;
         font-size: 0.85rem;
+        display: inline-block;
+        width: auto;
+        margin-bottom: 8px;
+    }
+
+    .btn-sm {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+
+    .btn-search,
+    .btn-add-marks {
+        width: 100%;
+        display: flex;
+        justify-content: center;
     }
 
     .main-content h2 {
@@ -562,7 +631,39 @@ footer .footer-content {
     }
 
     .table-section {
-        padding: 15px;
+        padding: 15px 10px;
+        overflow-x: visible;
+    }
+
+    .form-section {
+        padding: 20px 15px;
+        margin-bottom: 20px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        font-size: 0.95rem;
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    select,
+    textarea {
+        font-size: 16px;
+        padding: 12px;
+        width: 100%;
     }
 
     footer {
@@ -571,6 +672,231 @@ footer .footer-content {
 
     footer p {
         font-size: 0.85rem;
+    }
+
+    /* Action buttons in tables */
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: flex-end;
+    }
+
+    .action-buttons form {
+        display: inline;
+    }
+
+    .action-buttons .btn {
+        width: auto;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    .navbar-container {
+        padding: 10px;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .navbar-brand {
+        width: 100%;
+        gap: 10px;
+    }
+
+    .navbar-title {
+        font-size: 1rem;
+        word-break: break-word;
+    }
+
+    .navbar-links {
+        width: 100%;
+        gap: 8px;
+    }
+
+    .admin-user-info {
+        font-size: 0.75rem;
+        padding: 6px 12px;
+    }
+
+    .main-content {
+        padding: 15px 10px;
+    }
+
+    .main-content h2 {
+        font-size: 1.3rem;
+    }
+
+    .form-section {
+        padding: 15px 10px;
+        margin-bottom: 15px;
+    }
+
+    .search-form {
+        padding: 15px 10px;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    .search-button {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+    }
+
+    .btn {
+        padding: 10px;
+        font-size: 0.8rem;
+        width: 100%;
+        margin-bottom: 8px;
+        display: block;
+        text-align: center;
+    }
+
+    .btn-sm {
+        width: auto;
+        display: inline-block;
+        font-size: 0.7rem;
+        padding: 6px 8px;
+    }
+
+    .students-table {
+        font-size: 0.75rem;
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        border-collapse: collapse;
+    }
+
+    .students-table thead {
+        display: none;
+    }
+
+    .students-table tbody {
+        display: block;
+        width: 100%;
+    }
+
+    .students-table tr {
+        display: block;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .students-table td {
+        display: block;
+        padding: 8px;
+        text-align: right;
+        border-bottom: 1px solid #e2e8f0;
+        position: relative;
+        padding-left: 50%;
+        min-height: 30px;
+    }
+
+    .students-table td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 8px;
+        font-weight: bold;
+        color: var(--dark-text);
+    }
+
+    .students-table td:last-child {
+        border-bottom: none;
+    }
+
+    .table-section {
+        padding: 10px;
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        width: 100%;
+    }
+
+    .action-buttons .btn,
+    .action-buttons button {
+        width: 100%;
+        margin: 3px 0;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    select,
+    textarea {
+        font-size: 16px;
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    label {
+        font-size: 0.9rem;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    footer {
+        padding: 15px 10px;
+    }
+
+    footer p {
+        font-size: 0.75rem;
+    }
+
+    .sidebar {
+        width: 250px;
+        left: -250px;
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    .sidebar-nav {
+        padding: 10px 0;
+    }
+
+    .nav-section-title {
+        font-size: 0.85rem;
+        padding: 8px 15px;
+    }
+
+    .nav-item {
+        font-size: 0.85rem;
+        padding: 10px 15px;
+    }
+
+    .nav-item span {
+        display: none;
+    }
+
+    .nav-item i {
+        display: inline-block;
+        width: 30px;
+        text-align: center;
+    }
+
+    .nav-item.active::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: var(--primary-color);
     }
 }
 

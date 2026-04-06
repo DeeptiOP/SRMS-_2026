@@ -99,11 +99,11 @@
                         {% set counter = 1 %}
                         {% for mark in student_marks %}
                         <tr>
-                            <td>{{ counter }}</td>
-                            <td>{{ mark.subject }}</td>
-                            <td class="marks-value">{{ mark.marks }}</td>
-                            <td>{{ mark.created_at if mark.created_at else 'N/A' }}</td>
-                            <td>
+                            <td data-label="#" data-label="S.No">{{ counter }}</td>
+                            <td data-label="Subject">{{ mark.subject }}</td>
+                            <td data-label="Marks" class="marks-value">{{ mark.marks }}</td>
+                            <td data-label="Added On">{{ mark.created_at if mark.created_at else 'N/A' }}</td>
+                            <td data-label="Action">
                                 <button type="button" class="btn btn-sm btn-delete" onclick="deleteMark({{ mark.id }})">
                                     <i class="fas fa-trash"></i> Delete
                                 </button>
@@ -190,6 +190,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
                     }
                 })
                 .then(response => response.json())

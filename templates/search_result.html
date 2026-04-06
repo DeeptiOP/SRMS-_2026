@@ -204,8 +204,8 @@
                         <tbody>
                             {% for subject, marks in results.items() %}
                                 <tr>
-                                    <td>{{ subject }}</td>
-                                    <td>{{ marks }}</td>
+                                    <td data-label="Subject">{{ subject }}</td>
+                                    <td data-label="Marks">{{ marks }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>

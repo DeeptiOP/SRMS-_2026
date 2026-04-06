@@ -185,14 +185,14 @@
                         {% set counter = 1 %}
                         {% for student in students %}
                         <tr>
-                            <td>{{ counter }}</td>
-                            <td>{{ student.username }}</td>
-                            <td>{{ student.email }}</td>
-                            <td>{{ student.department }}</td>
-                            <td>{{ student.course }}</td>
-                            <td>{{ student.year }}</td>
-                            <td>{{ student.roll_number or 'N/A' }}</td>
-                            <td style="display: flex; gap: 5px; flex-wrap: wrap;">
+                            <td data-label="S.No">{{ counter }}</td>
+                            <td data-label="Username">{{ student.username }}</td>
+                            <td data-label="Email">{{ student.email }}</td>
+                            <td data-label="Department">{{ student.department }}</td>
+                            <td data-label="Course">{{ student.course }}</td>
+                            <td data-label="Year">{{ student.year }}</td>
+                            <td data-label="Roll ID">{{ student.roll_number or 'N/A' }}</td>
+                            <td data-label="Action" style="display: flex; gap: 5px; flex-wrap: wrap;">
                                 <a href="{{ url_for('marks', username=student.username) }}" class="btn btn-sm btn-add-marks" title="Add/Edit Marks">
                                     <i class="fas fa-pen"></i> Marks
                                 </a>
