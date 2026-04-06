@@ -9,6 +9,17 @@ class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
     WTF_CSRF_SECRET_KEY = os.getenv('WTF_CSRF_SECRET_KEY', 'csrf-secret-key-change-in-production')
 
+    # Session Configuration
+    SESSION_TYPE = os.getenv('SESSION_TYPE', 'filesystem')
+    SESSION_PERMANENT = os.getenv('SESSION_PERMANENT', 'False').lower() == 'true'
+    SESSION_USE_SIGNER = os.getenv('SESSION_USE_SIGNER', 'True').lower() == 'true'
+    PERMANENT_SESSION_LIFETIME = int(os.getenv('PERMANENT_SESSION_LIFETIME', '3600'))
+    SESSION_FILE_DIR = os.getenv('SESSION_FILE_DIR', '/tmp/flask_sessions')
+
+    # CSRF Configuration
+    WTF_CSRF_ENABLED = os.getenv('WTF_CSRF_ENABLED', 'True').lower() == 'true'
+    WTF_CSRF_TIME_LIMIT = int(os.getenv('WTF_CSRF_TIME_LIMIT', '3600'))
+
     # Database
     DB_HOST = os.getenv('DB_HOST', 'localhost')
     DB_USER = os.getenv('DB_USER', 'root')

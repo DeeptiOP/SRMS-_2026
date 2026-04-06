@@ -20,6 +20,13 @@ load_dotenv()
 app = Flask(__name__)
 app.config.from_object(config[os.getenv('FLASK_ENV', 'production')])
 
+# Ensure session is properly configured for CSRF
+app.config['SESSION_TYPE'] = app.config.get('SESSION_TYPE', 'filesystem')
+app.config['SESSION_PERMANENT'] = app.config.get('SESSION_PERMANENT', False)
+app.config['SESSION_USE_SIGNER'] = app.config.get('SESSION_USE_SIGNER', True)
+app.config['PERMANENT_SESSION_LIFETIME'] = app.config.get('PERMANENT_SESSION_LIFETIME', 3600)
+app.config['SESSION_FILE_DIR'] = app.config.get('SESSION_FILE_DIR', '/tmp/flask_sessions')
+
 # Initialize extensions
 csrf = CSRFProtect(app)
 limiter = Limiter(
