@@ -478,38 +478,68 @@ footer .footer-content {
     background: rgba(255, 255, 255, 0.3);
 }
 
-/* Responsive Design */
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablet and below (1024px and down) */
 @media (max-width: 1024px) {
     .main-content {
-        padding: 30px;
+        padding: 25px 20px;
+    }
+
+    .main-content h2 {
+        font-size: 1.75rem;
     }
 
     .table-section {
         padding: 20px;
+        overflow-x: auto;
+    }
+
+    .search-section {
+        padding: 20px;
+    }
+
+    .form-section {
+        padding: 20px;
+    }
+
+    .search-input {
+        min-width: 250px;
+    }
+
+    .navbar-title {
+        font-size: 1.4rem;
+    }
+
+    footer {
+        padding: 30px 20px;
     }
 }
 
+/* Medium screens (768px and below) - Tablet mode */
 @media (max-width: 768px) {
     :root {
         --sidebar-width: 0;
     }
 
+    /* Sidebar transitions to overlay */
     .sidebar {
         position: fixed;
         left: -280px;
         width: 280px;
         top: 64px;
+        height: calc(100vh - 64px);
         transition: left 0.3s ease;
         z-index: 98;
+        box-shadow: 2px 0 20px rgba(0, 0, 0, 0.2);
     }
 
     .sidebar.active {
         left: 0;
-        box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
     }
 
-    .sidebar-toggle {
-        display: block;
+    .dashboard-wrapper {
+        flex-direction: column;
     }
 
     .main-content {
@@ -517,6 +547,19 @@ footer .footer-content {
         padding: 20px 15px;
     }
 
+    .main-content h2 {
+        font-size: 1.4rem;
+        margin-bottom: 18px;
+    }
+
+    /* Sidebar Toggle Button */
+    .sidebar-toggle {
+        display: block;
+        padding: 8px;
+        margin-right: 10px;
+    }
+
+    /* Navbar optimizations */
     .navbar-container {
         padding: 12px 15px;
     }
@@ -526,34 +569,128 @@ footer .footer-content {
     }
 
     .navbar-links {
-        gap: 12px;
+        gap: 15px;
+        font-size: 0.9rem;
     }
 
-    .nav-link {
+    .admin-user-info {
         font-size: 0.85rem;
+        padding: 6px 12px;
+    }
+
+    /* Search Form Mobile Layout */
+    .search-section {
+        padding: 15px 12px;
+        margin-bottom: 20px;
     }
 
     .search-form {
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
     }
 
     .search-input {
         width: 100%;
-        min-width: 100%;
-        padding: 12px;
+        min-width: unset;
+        padding: 12px 14px;
+        font-size: 16px;
     }
 
-    .search-button {
+    .search-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+
+    .btn-search,
+    .btn-reset {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 1rem;
+    }
+
+    /* Form optimizations */
+    .form-section {
+        padding: 18px 12px;
+        margin-bottom: 20px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
         width: 100%;
     }
 
-    /* Card-based table layout for mobile */
-    .students-table {
+    label {
+        font-size: 0.95rem;
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--dark-text);
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    select,
+    textarea {
+        font-size: 16px;
+        padding: 12px 14px;
+        width: 100%;
+        border: 2px solid #e2e8f0;
+        border-radius: var(--border-radius);
+        transition: var(--transition);
+        min-height: 44px;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    /* Button optimizations for touch */
+    .btn {
+        padding: 12px 16px;
+        font-size: 0.95rem;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-sm {
+        padding: 8px 12px;
         font-size: 0.85rem;
+        min-height: 36px;
+    }
+
+    .btn-add-marks {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+    }
+
+    /* Table to Card Layout Conversion */
+    .table-section {
+        padding: 15px 10px;
+        overflow-x: visible;
+    }
+
+    .students-table {
         display: block;
         width: 100%;
         border-collapse: collapse;
+        font-size: 0.95rem;
     }
 
     .students-table thead {
@@ -569,90 +706,255 @@ footer .footer-content {
         display: block;
         background: white;
         border: 1px solid #e2e8f0;
-        margin-bottom: 15px;
-        border-radius: 8px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        padding: 12px;
         overflow: hidden;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
+    .students-table tr:last-child {
+        margin-bottom: 0;
+    }
+
     .students-table td {
-        display: block;
-        padding: 12px;
-        text-align: right;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border: none;
         border-bottom: 1px solid #f1f5f9;
-        position: relative;
-        padding-left: 40%;
         min-height: 36px;
     }
 
     .students-table td:last-child {
         border-bottom: none;
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .students-table td::before {
         content: attr(data-label);
-        position: absolute;
-        left: 12px;
-        font-weight: 700;
+        font-weight: 600;
         color: var(--dark-text);
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         text-transform: capitalize;
+        min-width: 100px;
     }
 
-    .students-table button {
-        padding: 6px 10px;
-        font-size: 0.75rem;
-        margin: 3px 2px;
-    }
-
-    .btn {
-        padding: 10px 12px;
-        font-size: 0.85rem;
-        display: inline-block;
+    .students-table button,
+    .students-table a.btn {
+        margin-top: 8px;
         width: auto;
-        margin-bottom: 8px;
     }
 
-    .btn-sm {
-        padding: 6px 10px;
-        font-size: 0.75rem;
-    }
-
-    .btn-search,
-    .btn-add-marks {
-        width: 100%;
+    /* Action buttons in card layout */
+    .action-buttons {
         display: flex;
-        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    .action-buttons form {
+        display: inline-block;
+        flex: 0 1 auto;
+    }
+
+    .action-buttons .btn,
+    .action-buttons button {
+        flex: 0 1 auto;
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        margin: 3px 0;
+    }
+
+    /* Results count styling */
+    .results-count {
+        margin-bottom: 15px;
+        font-size: 0.9rem;
+    }
+
+    /* Alert messages */
+    .alert {
+        padding: 14px 16px;
+        margin-bottom: 18px;
+        font-size: 0.95rem;
+    }
+
+    /* Footer adjustments */
+    footer {
+        padding: 20px 15px;
+    }
+
+    footer p {
+        font-size: 0.85rem;
+        margin: 6px 0;
+    }
+
+    /* No data state */
+    .no-data {
+        padding: 40px 20px;
+        font-size: 0.95rem;
+    }
+
+    .no-data p {
+        font-size: 0.95rem;
+    }
+}
+
+/* Small screens (480px and below) - Mobile phones */
+@media (max-width: 480px) {
+    :root {
+        font-size: 14px;
+    }
+
+    /* Navbar for very small screens */
+    .navbar {
+        position: sticky;
+        top: 0;
+    }
+
+    .navbar-container {
+        padding: 10px 12px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .navbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .sidebar-toggle {
+        padding: 6px;
+        font-size: 1.3rem;
+        order: -1;
+    }
+
+    .navbar-title {
+        font-size: 1rem;
+        word-break: break-word;
+        white-space: normal;
+        flex: 1;
+    }
+
+    .navbar-links {
+        width: 100%;
+        gap: 8px;
+        font-size: 0.8rem;
+        order: 3;
+    }
+
+    .admin-user-info {
+        font-size: 0.75rem;
+        padding: 5px 8px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Main content spacing for mobile */
+    .main-content {
+        padding: 12px 10px;
+        margin-left: 0;
     }
 
     .main-content h2 {
-        font-size: 1.5rem;
-        margin-bottom: 20px;
+        font-size: 1.25rem;
+        margin-bottom: 16px;
     }
 
-    .table-section {
-        padding: 15px 10px;
-        overflow-x: visible;
+    /* Sidebar for small phones */
+    .sidebar {
+        width: 250px;
+        left: -250px;
     }
 
+    .sidebar-header {
+        padding: 18px 15px;
+    }
+
+    .sidebar-title {
+        font-size: 1rem;
+    }
+
+    .sidebar-nav {
+        padding: 12px 0;
+    }
+
+    .nav-section {
+        margin-bottom: 15px;
+    }
+
+    .nav-section-title {
+        font-size: 0.75rem;
+        padding: 6px 15px;
+        letter-spacing: 0.5px;
+    }
+
+    .nav-item {
+        font-size: 0.9rem;
+        padding: 10px 15px;
+        gap: 10px;
+    }
+
+    .nav-item i {
+        font-size: 1rem;
+        width: 18px;
+    }
+
+    /* Search form for extreme mobile */
+    .search-section {
+        padding: 12px 10px;
+        margin-bottom: 16px;
+    }
+
+    .search-form {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 16px;
+        border: 2px solid #e2e8f0;
+    }
+
+    .btn-search,
+    .btn-reset {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 0.95rem;
+        min-height: 44px;
+    }
+
+    /* Form sections for mobile */
     .form-section {
-        padding: 20px 15px;
-        margin-bottom: 20px;
+        padding: 12px 10px;
+        margin-bottom: 14px;
     }
 
     .form-row {
         flex-direction: column;
-        gap: 15px;
+        gap: 12px;
     }
 
     .form-group {
-        margin-bottom: 15px;
+        margin-bottom: 12px;
+        width: 100%;
     }
 
     label {
-        font-size: 0.95rem;
-        display: block;
+        font-size: 0.9rem;
         margin-bottom: 6px;
+        display: block;
+        font-weight: 500;
     }
 
     input[type="text"],
@@ -662,116 +964,48 @@ footer .footer-content {
     select,
     textarea {
         font-size: 16px;
-        padding: 12px;
+        padding: 10px 12px;
         width: 100%;
+        min-height: 44px;
     }
 
-    footer {
-        padding: 25px 15px;
+    textarea {
+        min-height: 100px;
+        resize: vertical;
     }
 
-    footer p {
-        font-size: 0.85rem;
-    }
-
-    /* Action buttons in tables */
-    .action-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        justify-content: flex-end;
-    }
-
-    .action-buttons form {
-        display: inline;
-    }
-
-    .action-buttons .btn {
-        width: auto;
-    }
-}
-
-/* Extra small devices */
-@media (max-width: 480px) {
-    .navbar-container {
-        padding: 10px;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .navbar-brand {
-        width: 100%;
-        gap: 10px;
-    }
-
-    .navbar-title {
-        font-size: 1rem;
-        word-break: break-word;
-    }
-
-    .navbar-links {
-        width: 100%;
-        gap: 8px;
-    }
-
-    .admin-user-info {
-        font-size: 0.75rem;
-        padding: 6px 12px;
-    }
-
-    .main-content {
-        padding: 15px 10px;
-    }
-
-    .main-content h2 {
-        font-size: 1.3rem;
-    }
-
-    .form-section {
-        padding: 15px 10px;
-        margin-bottom: 15px;
-    }
-
-    .search-form {
-        padding: 15px 10px;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .search-input {
-        width: 100%;
-        padding: 10px;
-        font-size: 16px;
-    }
-
-    .search-button {
-        width: 100%;
-        padding: 12px;
-        font-size: 1rem;
-    }
-
+    /* All buttons full width or appropriate mobile sizing */
     .btn {
-        padding: 10px;
-        font-size: 0.8rem;
         width: 100%;
+        padding: 11px 14px;
+        font-size: 0.9rem;
+        min-height: 44px;
         margin-bottom: 8px;
-        display: block;
-        text-align: center;
     }
 
     .btn-sm {
         width: auto;
-        display: inline-block;
-        font-size: 0.7rem;
+        display: inline-flex;
+        font-size: 0.75rem;
         padding: 6px 8px;
+        min-height: auto;
+    }
+
+    /* Table section and card layout */
+    .table-section {
+        padding: 10px 8px;
+        overflow-x: visible;
+    }
+
+    .results-count {
+        margin-bottom: 12px;
+        font-size: 0.85rem;
     }
 
     .students-table {
-        font-size: 0.75rem;
         display: block;
         width: 100%;
-        overflow-x: auto;
-        border-collapse: collapse;
+        font-size: 0.85rem;
     }
 
     .students-table thead {
@@ -780,123 +1014,156 @@ footer .footer-content {
 
     .students-table tbody {
         display: block;
-        width: 100%;
     }
 
     .students-table tr {
         display: block;
+        background: white;
         border: 1px solid #e2e8f0;
-        margin-bottom: 15px;
         border-radius: 8px;
-        overflow: hidden;
+        margin-bottom: 12px;
+        padding: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
     }
 
     .students-table td {
-        display: block;
-        padding: 8px;
-        text-align: right;
-        border-bottom: 1px solid #e2e8f0;
-        position: relative;
-        padding-left: 50%;
-        min-height: 30px;
-    }
-
-    .students-table td:before {
-        content: attr(data-label);
-        position: absolute;
-        left: 8px;
-        font-weight: bold;
-        color: var(--dark-text);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 8px 0;
+        border: none;
+        border-bottom: 1px solid #f1f5f9;
+        min-height: 32px;
+        gap: 8px;
     }
 
     .students-table td:last-child {
         border-bottom: none;
+        display: block;
     }
 
-    .table-section {
-        padding: 10px;
+    .students-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--dark-text);
+        font-size: 0.8rem;
+        text-transform: capitalize;
+        white-space: nowrap;
+        min-width: 80px;
     }
 
+    /* Action buttons in card format */
     .action-buttons {
         display: flex;
         flex-direction: column;
-        gap: 5px;
+        gap: 6px;
+        margin-top: 8px;
+    }
+
+    .action-buttons form {
+        display: block;
         width: 100%;
     }
 
     .action-buttons .btn,
     .action-buttons button {
         width: 100%;
-        margin: 3px 0;
+        padding: 10px 12px;
+        font-size: 0.8rem;
+        margin: 0;
+        min-height: 40px;
     }
 
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    input[type="number"],
-    select,
-    textarea {
-        font-size: 16px;
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-    }
-
-    label {
+    /* Alert messages */
+    .alert {
+        padding: 12px 14px;
+        margin-bottom: 14px;
+        border-radius: 8px;
         font-size: 0.9rem;
-        display: block;
-        margin-bottom: 5px;
     }
 
+    /* Footer */
     footer {
-        padding: 15px 10px;
+        padding: 12px 10px;
     }
 
     footer p {
         font-size: 0.75rem;
+        margin: 4px 0;
+    }
+
+    .footer-content {
+        padding: 0;
+    }
+
+    /* No data state */
+    .no-data {
+        padding: 30px 15px;
+        border-radius: 8px;
+    }
+
+    .no-data p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Extra small screens (320px) */
+@media (max-width: 320px) {
+    :root {
+        font-size: 13px;
+    }
+
+    .navbar-container {
+        padding: 8px 10px;
+    }
+
+    .navbar-title {
+        font-size: 0.9rem;
+    }
+
+    .main-content h2 {
+        font-size: 1.1rem;
+    }
+
+    .sidebar-toggle {
+        padding: 4px;
     }
 
     .sidebar {
-        width: 250px;
-        left: -250px;
+        width: calc(100vw - 20px);
+        max-width: 240px;
     }
 
-    .sidebar.active {
-        left: 0;
-    }
-
-    .sidebar-nav {
-        padding: 10px 0;
-    }
-
-    .nav-section-title {
+    .btn {
+        padding: 9px 10px;
         font-size: 0.85rem;
-        padding: 8px 15px;
     }
 
-    .nav-item {
-        font-size: 0.85rem;
-        padding: 10px 15px;
+    .main-content {
+        padding: 10px 8px;
     }
 
-    .nav-item span {
-        display: none;
+    .search-form {
+        gap: 8px;
     }
 
-    .nav-item i {
-        display: inline-block;
-        width: 30px;
-        text-align: center;
+    .form-section {
+        padding: 10px 8px;
     }
 
-    .nav-item.active::after {
-        content: '';
-        position: absolute;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        width: 3px;
-        background: var(--primary-color);
+    .students-table tr {
+        padding: 8px;
+        margin-bottom: 10px;
+    }
+
+    .students-table td {
+        padding: 6px 0;
+        min-height: 28px;
+    }
+
+    .students-table td::before {
+        font-size: 0.75rem;
+        min-width: 70px;
     }
 }
 
