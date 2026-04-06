@@ -20,6 +20,7 @@
 
             <div class="search-form">
                 <form method="POST" id="searchForm">
+                    {{ csrf_token() }}
                     <div class="form-group">
                         <label for="roll_number"><i class="fas fa-id-card"></i> Roll Number</label>
                         <input type="text" id="roll_number" name="roll_number" placeholder="e.g., STU001" required>
@@ -97,6 +98,7 @@
             </div>
 
             <form action="/index" method="post" class="form show" id="loginForm">
+                {{ csrf_token() }}
                 <input type="hidden" id="roleInput" name="role" value="student">
                 <div class="form-group">
                     <label for="username"><i class="fas fa-user"></i> Username</label>

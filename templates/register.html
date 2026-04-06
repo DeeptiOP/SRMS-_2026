@@ -23,6 +23,7 @@
             {% endif %}
 
             <form method="post" class="form">
+                {{ csrf_token() }}
                 <div class="form-group">
                     <label for="roll_number">🎫 Roll Number:</label>
                     <input type="text" id="roll_number" name="roll_number" required placeholder="e.g., STU001, 001">

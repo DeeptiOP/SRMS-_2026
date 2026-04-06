@@ -143,6 +143,7 @@
         
         <div class="search-form">
             <form method="POST">
+                {{ csrf_token() }}
                 <div class="form-group">
                     <label for="roll_number">Enter Roll Number:</label>
                     <input type="text" id="roll_number" name="roll_number" placeholder="e.g., 001" value="{{ request.form.get('roll_number', '') }}" required>
