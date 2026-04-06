@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+    background: linear-gradient(135deg, #031461 5%, #37026b 25%, #a35802 50%, #9d0303 70%, #4facfe 100%);
     background-size: 400% 400%;
     animation: gradientShift 15s ease infinite;
     min-height: 100vh;
@@ -50,9 +50,9 @@ body::before {
     font-size: 3rem;
     font-weight: 800;
     margin: 0;
-    text-shadow: 0 2px 4px rgba(9, 17, 240, 0.184);
+    text-shadow: 0 2px 4px rgba(0, 237, 254, 0.84);
     letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #001eff 0%, #091257 50%, #017ffd 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #ffffff 50%, #ffffff 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

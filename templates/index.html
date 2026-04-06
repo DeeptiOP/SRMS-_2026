@@ -69,6 +69,7 @@
                         <tr>
                             <th>Subject</th>
                             <th>Marks</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody id="resultsBody"></tbody>
@@ -102,7 +103,7 @@
                 <input type="hidden" id="roleInput" name="role" value="student">
                 <div class="form-group">
                     <label for="username"><i class="fas fa-user"></i> Username</label>
-                    <input type="text" id="username" name="username" required placeholder="Enter your username">
+                    <input type="text" id="username" name="username" required placeholder="Enter your username" value="{{ request.args.get('username', '') }}">
                 </div>
                 <div class="form-group">
                     <label for="password"><i class="fas fa-lock"></i> Password</label>
@@ -194,13 +195,23 @@
             tbody.innerHTML = '';
             rows.forEach(row => {
                 const cells = row.querySelectorAll('td');
-                if (cells.length >= 2) {
+                if (cells.length >= 3) {
                     const newRow = document.createElement('tr');
-                    newRow.innerHTML = `<td>${cells[0].textContent.trim()}</td><td>${cells[1].textContent.trim()}</td>`;
+                    const subject = cells[0].textContent.trim();
+                    const marks = cells[1].textContent.trim();
+                    const status = cells[2].textContent.trim();
+                    newRow.innerHTML = `<td>${subject}</td><td>${marks}</td><td>${status}</td>`;
                     tbody.appendChild(newRow);
                 }
             });
             if (tbody.children.length) {
+                // Update table header to include Status column
+                const thead = document.querySelector('#resultsTable thead tr');
+                if (thead.children.length === 2) {
+                    const statusHeader = document.createElement('th');
+                    statusHeader.textContent = 'Status';
+                    thead.appendChild(statusHeader);
+                }
                 document.getElementById('resultsSection').classList.add('show');
             }
         }

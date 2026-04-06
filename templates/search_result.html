@@ -77,6 +77,11 @@
             padding: 10px;
             border-radius: 4px;
             border: 1px solid #ddd;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .info-item:hover, .info-item:active {
+            background-color: #f0f0f0;
         }
         .info-label {
             font-weight: bold;
@@ -199,21 +204,70 @@
                             <tr>
                                 <th>Subject</th>
                                 <th>Marks</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for subject, marks in results.items() %}
                                 <tr>
                                     <td data-label="Subject">{{ subject }}</td>
-                                    <td data-label="Marks">{{ marks }}</td>
+                                    <td data-label="Marks">
+                                        {% if marks == 'Not uploaded' %}
+                                            -
+                                        {% else %}
+                                            {{ marks }}
+                                        {% endif %}
+                                    </td>
+                                    <td data-label="Status">
+                                        {% if marks == 'Not uploaded' %}
+                                            <span style="color: #dc3545; font-weight: bold;">Not Uploaded</span>
+                                        {% else %}
+                                            <span style="color: #28a745; font-weight: bold;">Available</span>
+                                        {% endif %}
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>
                     </table>
+                    
+                    {% set uploaded_marks = [] %}
+                    {% for mark in results.values() %}
+                        {% if mark != 'Not uploaded' %}
+                            {% set _ = uploaded_marks.append(mark) %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if not uploaded_marks %}
+                        <div class="alert alert-info" style="margin-top: 20px;">
+                            No marks available this time. The subjects are listed above.
+                        </div>
+                    {% endif %}
+
+                    {% if uploaded_marks %}
+                        <div class="marks-summary">
+                            {% set total_marks = uploaded_marks | sum %}
+                            {% set num_subjects = uploaded_marks | length %}
+                            {% set percentage = (total_marks / num_subjects) | round(2) if num_subjects > 0 else 0 %}
+                            
+                            <h3>Summary (Uploaded Subjects Only)</h3>
+                            <p><strong>Total Marks:</strong> {{ total_marks }}</p>
+                            <p><strong>Number of Subjects:</strong> {{ num_subjects }}</p>
+                            <p><strong>Percentage:</strong> {{ percentage }}%</p>
+                            <p><strong>Grade:</strong> 
+                                {% if percentage >= 90 %}A+
+                                {% elif percentage >= 80 %}A
+                                {% elif percentage >= 70 %}B+
+                                {% elif percentage >= 60 %}B
+                                {% elif percentage >= 50 %}C
+                                {% else %}F
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% endif %}
                 </div>
             {% else %}
                 <div class="no-results">
-                    <p>This student has not yet received any marks.</p>
+                    <p>This student has not been assigned to any subjects yet.</p>
                 </div>
             {% endif %}
         {% endif %}

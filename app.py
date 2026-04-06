@@ -347,8 +347,8 @@ def register():
                 (username, hashed_password, email, roll_number, course, year, department, 0)
             )
             conn.commit()
-            msg = 'Registered successfully! Please log in.'
-            return render_template('register.html', msg=msg)
+            flash('Registered successfully! Please log in.', 'success')
+            return redirect(url_for('index', username=username))
         
         except Error as e:
             logger.error(f"Registration error: {e}")
@@ -1161,6 +1161,7 @@ def search_result():
     msg = ''
     results = {}
     student = None
+    all_subjects = []
     
     if request.method == 'POST':
         roll_number = request.form.get('roll_number', '').strip()
@@ -1185,21 +1186,42 @@ def search_result():
                         student = cursor.fetchone()
                         
                         if student:
+                            # Find all classes that match the student's department and year
                             cursor.execute(
-                                "SELECT subject, marks FROM marks WHERE users_id=%s ORDER BY subject ASC",
+                                "SELECT id FROM classes WHERE department=%s AND year=%s",
+                                (student['department'], student['year'])
+                            )
+                            matching_classes = cursor.fetchall()
+                            
+                            if matching_classes:
+                                class_ids = [cls['id'] for cls in matching_classes]
+                                # Find all subjects for these classes
+                                format_strings = ','.join(['%s'] * len(class_ids))
+                                cursor.execute(
+                                    f"SELECT DISTINCT s.subject_name FROM subjects s JOIN class_subjects cs ON s.id = cs.subject_id WHERE cs.class_id IN ({format_strings}) AND cs.is_active=1",
+                                    tuple(class_ids)
+                                )
+                                subjects_data = cursor.fetchall()
+                                all_subjects = [subj['subject_name'] for subj in subjects_data]
+                            
+                            # Fetch existing marks for this student
+                            cursor.execute(
+                                "SELECT subject, marks FROM marks WHERE users_id=%s",
                                 (student['id'],)
                             )
                             marks_data = cursor.fetchall()
                             
-                            total_marks = 0
-                            num_subjects = 0
-                            for row in marks_data:
-                                results[row['subject']] = row['marks']
-                                total_marks += row['marks']
-                                num_subjects += 1
+                            # Create results dict with all subjects
+                            for subject in all_subjects:
+                                # Check if marks exist for this subject
+                                mark_entry = next((m for m in marks_data if m['subject'] == subject), None)
+                                if mark_entry:
+                                    results[subject] = mark_entry['marks']
+                                else:
+                                    results[subject] = 'Not uploaded'
                             
-                            if num_subjects == 0:
-                                msg = 'No marks found for this student'
+                            if not all_subjects:
+                                msg = 'No subjects found for this student\'s class'
                         else:
                             msg = 'Student not found with this roll number!'
                     
