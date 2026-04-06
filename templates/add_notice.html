@@ -191,7 +191,7 @@
 
             <div class="form-section">
                 <form method="POST">
-                    {{ csrf_token() }}
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="form-group">
                         <label for="title">📌 Notice Title:</label>
                         <input type="text" id="title" name="title" placeholder="Enter notice title" required>

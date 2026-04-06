@@ -203,7 +203,7 @@
                 </div>
 
                 <form method="POST">
-                    {{ csrf_token() }}
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="form-group">
                         <label for="roll_number">📍 Roll Number:</label>
                         <input type="text" id="roll_number" name="roll_number" value="{{ student['roll_number'] or '' }}" required placeholder="Enter roll number">
