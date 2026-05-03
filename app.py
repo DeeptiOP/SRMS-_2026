@@ -58,11 +58,16 @@ db_config = {
     'user': app.config['DB_USER'],
     'password': app.config['DB_PASSWORD'],
     'database': app.config['DB_NAME'],
-    'port': app.config['DB_PORT'],  # Use config value (already converted to int)
+    'port': int(app.config['DB_PORT']),  # Explicitly convert to int
     'pool_name': 'srms_pool',
     'pool_size': 5,
     'pool_reset_session': True
 }
+
+# Debug: Print config values
+logger.info(f"DB_HOST: {app.config['DB_HOST']} (type: {type(app.config['DB_HOST'])})")
+logger.info(f"DB_PORT: {app.config['DB_PORT']} (type: {type(app.config['DB_PORT'])})")
+logger.info(f"DB_USER: {app.config['DB_USER']} (type: {type(app.config['DB_USER'])})")
 
 # Create connection pool
 try:
