@@ -68,8 +68,10 @@ db_config = {
 try:
     connection_pool = MySQLConnectionPool(**db_config)
     logger.info("Database connection pool created successfully")
+    logger.info(f"Database config: host={db_config['host']}, port={db_config['port']}, database={db_config['database']}")
 except Error as e:
     logger.error(f"Database connection pool error: {e}")
+    logger.error(f"Connection config: host={db_config.get('host')}, port={db_config.get('port')}, user={db_config.get('user')}, database={db_config.get('database')}")
     connection_pool = None
 
 def get_db_connection():
