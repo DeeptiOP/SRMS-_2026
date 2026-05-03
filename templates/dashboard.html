@@ -4,6 +4,272 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard - SRMS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        .print-button-container {
+            text-align: right !important;
+            margin-bottom: 20px !important;
+        }
+
+        .btn-print {
+            background: #007bff !important;
+            color: white !important;
+            padding: 10px 20px !important;
+            border: none !important;
+            border-radius: 4px !important;
+            cursor: pointer !important;
+            font-size: 14px !important;
+            transition: all 0.3s ease !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            margin-right: 10px !important;
+        }
+
+        .btn-print:hover {
+            background: #0056b3 !important;
+        }
+
+        .btn-pdf {
+            background: #28a745 !important;
+            color: white !important;
+            padding: 10px 20px !important;
+            border: none !important;
+            border-radius: 4px !important;
+            cursor: pointer !important;
+            font-size: 14px !important;
+            transition: all 0.3s ease !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+
+        .btn-pdf:hover {
+            background: #218838 !important;
+        }
+
+        .btn-pdf:disabled {
+            background: #6c757d !important;
+            cursor: not-allowed !important;
+        }
+
+        .btn-print:disabled {
+            background: #6c757d !important;
+            cursor: not-allowed !important;
+        }
+
+        .dashboard-results-card {
+            background: white !important;
+            border-radius: 8px !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+            margin-top: 30px !important;
+            padding: 30px !important;
+            border-top: 4px solid #007bff !important;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .results-header h2 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .institution-name {
+            font-size: 14px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .dashboard-results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .dashboard-results-table th {
+            background: #007bff;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .dashboard-results-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .dashboard-results-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .dashboard-results-table tbody tr:nth-child(even) {
+            background: #fafbfc;
+        }
+
+        .subject-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .marks-value {
+            text-align: center;
+            font-weight: 600;
+            color: #007bff;
+            font-size: 15px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .status-pass {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-fail {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .performance-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .percentage-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .percentage-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .grade-display {
+            font-size: 48px;
+            font-weight: bold;
+            color: #f8b500;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .navbar {
+                display: none;
+            }
+
+            footer {
+                display: none;
+            }
+
+            .dashboard-container header {
+                display: none;
+            }
+
+            .actions-section {
+                display: none;
+            }
+
+            .user-info {
+                display: none;
+            }
+
+            .print-button-container {
+                display: none;
+            }
+
+            .dashboard-results-card {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                page-break-inside: avoid;
+            }
+
+            .info-box {
+                display: none;
+            }
+
+            /* Ensure proper page breaks */
+            .results-header {
+                page-break-after: avoid;
+            }
+
+            .dashboard-results-table {
+                page-break-inside: avoid;
+            }
+
+            .performance-summary {
+                page-break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-results-card {
+                padding: 20px;
+            }
+
+            .performance-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-results-table th,
+            .dashboard-results-table td {
+                padding: 8px;
+                font-size: 12px;
+            }
+        }
+    </style>
     <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
 </head>
 <body>
@@ -60,51 +326,97 @@
             </div>
         </section>
 
-        <h3 class="section-title">📊 Your Marks</h3>
-        <section class="results">
+        <h3 class="section-title">📊 Your Academic Results</h3>
+        <div class="dashboard-results-card" id="resultsCard">
+            <div class="print-button-container">
+                <button onclick="printResult()" class="btn-print">
+                    <i class="fas fa-print"></i> Print Result
+                </button>
+                <button onclick="downloadPDF()" class="btn-pdf">
+                    <i class="fas fa-download"></i> Download PDF
+                </button>
+            </div>
+
+            <div class="results-header">
+                <div class="institution-name">HI-TECH INSTITUTE OF TECHNOLOGY</div>
+                <h2>📊 Academic Results</h2>
+            </div>
+
             {% if results %}
-                <table class="results-table">
+                <!-- Student Details for Result Card -->
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <h4 style="color: #333; margin-bottom: 10px; border-bottom: 2px solid #007bff; padding-bottom: 8px;">Student Information</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div>
+                            <strong>Name:</strong> {{ username }}
+                        </div>
+                        <div>
+                            <strong>Course:</strong> {{ course }}
+                        </div>
+                        <div>
+                            <strong>Year:</strong> {{ year }}
+                        </div>
+                        <div>
+                            <strong>Department:</strong> {{ department }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Marks Table -->
+                <h4 style="color: #333; margin: 20px 0 15px 0; border-bottom: 2px solid #007bff; padding-bottom: 8px;">Subject Marks Details</h4>
+                <table class="dashboard-results-table">
                     <thead>
                         <tr>
-                            <th>📖 Subject</th>
-                            <th>📝 Marks</th>
+                            <th>Subject</th>
+                            <th style="text-align: center;">Marks (Out of 100)</th>
+                            <th style="text-align: center;">Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for subject, marks in results.items() %}
                         <tr>
-                            <td data-label="Subject">{{ subject }}</td>
-                            <td data-label="Marks" class="marks-value">{{ marks }}</td>
+                            <td class="subject-name">{{ subject }}</td>
+                            <td class="marks-value">{{ marks }}/100</td>
+                            <td style="text-align: center;">
+                                {% if marks >= 40 %}
+                                    <span class="status-badge status-pass">✓ PASS</span>
+                                {% else %}
+                                    <span class="status-badge status-fail">✗ FAIL</span>
+                                {% endif %}
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-            {% else %}
-                <p class="no-data">No marks have been assigned yet. Please contact your admin.</p>
-            {% endif %}
-        </section>
 
-        <h3 class="section-title">📈 Performance Summary</h3>
-        <section class="summary">
-            <div class="summary-grid">
-                <div class="summary-item">
-                    <span class="summary-label">Total Marks</span>
-                    <span class="summary-value">{{ total_marks }}</span>
+                <!-- Performance Summary -->
+                {% if num_subjects > 0 %}
+                <h4 style="color: #333; margin: 30px 0 15px 0; border-bottom: 2px solid #007bff; padding-bottom: 8px;">Performance Summary</h4>
+                <div class="performance-summary">
+                    <div class="summary-card">
+                        <div class="summary-label">Total Marks</div>
+                        <div class="summary-value">{{ total_marks }}</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">Number of Subjects</div>
+                        <div class="summary-value">{{ num_subjects }}</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">Average Percentage</div>
+                        <div class="percentage-circle">
+                            <span class="percentage-value">{{ percentage }}%</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">Grade</div>
+                        <div class="grade-display">{{ grade }}</div>
+                    </div>
                 </div>
-                <div class="summary-item">
-                    <span class="summary-label">Number of Subjects</span>
-                    <span class="summary-value">{{ num_subjects }}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Percentage</span>
-                    <span class="summary-value">{{ percentage }}%</span>
-                </div>
-                <div class="summary-item grade-badge">
-                    <span class="summary-label">Grade</span>
-                    <span class="grade-value">{{ grade }}</span>
-                </div>
-            </div>
-        </section>
+                {% endif %}
+            {% else %}
+                <p class="no-data" style="background: #e7f3ff; border: 1px solid #b3d9ff; border-radius: 5px; padding: 20px; text-align: center; color: #0056b3; margin-top: 20px;">No marks have been assigned yet. Please contact your admin.</p>
+            {% endif %}
+        </div>
     </div>
 
     <footer>
@@ -115,5 +427,68 @@
             <p>All rights reserved © Hi-Tech College CSE major project.</p>
         </div>
     </footer>
+
+    <script>
+        function printResult() {
+            const printButton = document.querySelector('.btn-print');
+            const pdfButton = document.querySelector('.btn-pdf');
+
+            // Disable buttons during print
+            printButton.disabled = true;
+            pdfButton.disabled = true;
+            printButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Printing...';
+            pdfButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparing...';
+
+            // Trigger print
+            window.print();
+
+            // Re-enable buttons after a short delay
+            setTimeout(() => {
+                printButton.disabled = false;
+                pdfButton.disabled = false;
+                printButton.innerHTML = '<i class="fas fa-print"></i> Print Result';
+                pdfButton.innerHTML = '<i class="fas fa-download"></i> Download PDF';
+            }, 1000);
+        }
+
+        function downloadPDF() {
+            const printButton = document.querySelector('.btn-print');
+            const pdfButton = document.querySelector('.btn-pdf');
+
+            // Disable buttons during PDF generation
+            printButton.disabled = true;
+            pdfButton.disabled = true;
+            printButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparing...';
+            pdfButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
+
+            const element = document.getElementById('resultsCard');
+
+            const opt = {
+                margin: 1,
+                filename: 'academic_results.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Generate PDF
+            html2pdf().set(opt).from(element).save().then(() => {
+                // Re-enable buttons after PDF generation
+                printButton.disabled = false;
+                pdfButton.disabled = false;
+                printButton.innerHTML = '<i class="fas fa-print"></i> Print Result';
+                pdfButton.innerHTML = '<i class="fas fa-download"></i> Download PDF';
+            }).catch((error) => {
+                console.error('PDF generation failed:', error);
+                alert('PDF generation failed. Please try again.');
+
+                // Re-enable buttons on error
+                printButton.disabled = false;
+                pdfButton.disabled = false;
+                printButton.innerHTML = '<i class="fas fa-print"></i> Print Result';
+                pdfButton.innerHTML = '<i class="fas fa-download"></i> Download PDF';
+            });
+        }
+    </script>
 </body>
 </html>

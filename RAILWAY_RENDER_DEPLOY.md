@@ -3,12 +3,12 @@
 ## Your Railway Database Credentials
 ```
 MYSQL_DATABASE: railway
-MYSQL_PUBLIC_URL: mysql://root:QJAklEaRgLuequxVOlMGRUKwZGCcMIwa@junction.proxy.rlwy.net:37430/railway
-MYSQL_ROOT_PASSWORD: QJAklEaRgLuequxVOlMGRUKwZGCcMIwa
-MYSQL_URL: mysql://root:QJAklEaRgLuequxVOlMGRUKwZGCcMIwa@mysql.railway.internal:3306/railway
+MYSQL_PUBLIC_URL: mysql://root:ozLXsDoEIXYXsNJXJpxbcDXvTqkYzzSk@switchyard.proxy.rlwy.net:43529/railway
+MYSQL_ROOT_PASSWORD: ozLXsDoEIXYXsNJXJpxbcDXvTqkYzzSk
+MYSQL_URL: mysql://root:ozLXsDoEIXYXsNJXJpxbcDXvTqkYzzSk@mysql.railway.internal:3306/railway
 MYSQLHOST: mysql.railway.internal
 MYSQLDATABASE: railway
-MYSQLPASSWORD: QJAklEaRgLuequxVOlMGRUKwZGCcMIwa
+MYSQLPASSWORD: ozLXsDoEIXYXsNJXJpxbcDXvTqkYzzSk
 MYSQLPORT: 3306
 MYSQLUSER: root
 ```
@@ -43,7 +43,7 @@ ADMIN_REGISTRATION_KEY=SECURE_ADMIN_KEY_FOR_PRODUCTION_2024
 # Railway Database (Internal Connection - Recommended for Render)
 DB_HOST=mysql.railway.internal
 DB_USER=root
-DB_PASSWORD=QJAklEaRgLuequxVOlMGRUKwZGCcMIwa
+DB_PASSWORD=ozLXsDoEIXYXsNJXJpxbcDXvTqkYzzSk
 DB_NAME=railway
 DB_PORT=3306
 ```

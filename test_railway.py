@@ -23,13 +23,13 @@ def test_railway_connection():
     print()
 
     # Test external connection (for local testing)
-    print("🌐 Testing EXTERNAL connection (junction.proxy.rlwy.net:37430)...")
+    print("🌐 Testing EXTERNAL connection (switchyard.proxy.rlwy.net:43529)...")
     try:
         conn = mysql.connector.connect(
-            host='junction.proxy.rlwy.net',
-            port=37430,
+            host='switchyard.proxy.rlwy.net',
+            port=43529,
             user='root',
-            password='QJAklEaRgLuequxVOlMGRUKwZGCcMIwa',
+            password='ozLXsDoEIXYXsNJXJpxbcDXvTqkYzzSk',
             database='railway',
             connection_timeout=10
         )
@@ -47,12 +47,12 @@ def test_railway_connection():
     print("   DB_HOST=mysql.railway.internal")
     print("   DB_PORT=3306")
     print("   DB_USER=root")
-    print("   DB_PASSWORD=QJAklEaRgLuequxVOlMGRUKwZGCcMIwa")
+    print("   DB_PASSWORD=ozLXsDoEIXYXsNJXJpxbcDXvTqkYzzSk")
     print("   DB_NAME=railway")
     print()
     print("⚠️  IMPORTANT: Set these in Render dashboard, NOT in .env file!")
     print("   Render uses INTERNAL Railway connection (mysql.railway.internal)")
-    print("   Local uses EXTERNAL Railway connection (junction.proxy.rlwy.net)")
+    print("   Local uses EXTERNAL Railway connection (switchyard.proxy.rlwy.net)")
 
 if __name__ == "__main__":
     test_railway_connection()

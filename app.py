@@ -633,7 +633,7 @@ def logout():
 @app.route('/profile')
 @login_required
 def profile():
-    """View and edit user profile"""
+    """View and edit user profile with results details"""
     users_id = session.get('users_id')
     
     conn = get_db_connection()
@@ -655,7 +655,42 @@ def profile():
             flash('User not found.', 'danger')
             return redirect(url_for('index'))
         
-        return render_template('profile.html', user=user)
+        # Fetch student marks
+        cursor.execute("SELECT subject, marks FROM marks WHERE users_id=%s ORDER BY subject ASC", (users_id,))
+        marks_data = cursor.fetchall()
+        
+        results = {}
+        total_marks = 0
+        num_subjects = 0
+        
+        for mark in marks_data:
+            results[mark['subject']] = mark['marks']
+            total_marks += mark['marks']
+            num_subjects += 1
+        
+        percentage = round(total_marks / num_subjects, 2) if num_subjects > 0 else 0
+        
+        # Calculate grade
+        if percentage >= 90:
+            grade = 'A+'
+        elif percentage >= 80:
+            grade = 'A'
+        elif percentage >= 70:
+            grade = 'B+'
+        elif percentage >= 60:
+            grade = 'B'
+        elif percentage >= 50:
+            grade = 'C'
+        else:
+            grade = 'F'
+        
+        return render_template('profile.html', 
+                             user=user, 
+                             results=results,
+                             total_marks=total_marks,
+                             num_subjects=num_subjects,
+                             percentage=percentage,
+                             grade=grade)
     
     except Error as e:
         logger.error(f"Profile page error: {e}")
@@ -1161,7 +1196,6 @@ def search_result():
     msg = ''
     results = {}
     student = None
-    all_subjects = []
     
     if request.method == 'POST':
         roll_number = request.form.get('roll_number', '').strip()
@@ -1186,24 +1220,6 @@ def search_result():
                         student = cursor.fetchone()
                         
                         if student:
-                            # Find all classes that match the student's department and year
-                            cursor.execute(
-                                "SELECT id FROM classes WHERE department=%s AND year=%s",
-                                (student['department'], student['year'])
-                            )
-                            matching_classes = cursor.fetchall()
-                            
-                            if matching_classes:
-                                class_ids = [cls['id'] for cls in matching_classes]
-                                # Find all subjects for these classes
-                                format_strings = ','.join(['%s'] * len(class_ids))
-                                cursor.execute(
-                                    f"SELECT DISTINCT s.subject_name FROM subjects s JOIN class_subjects cs ON s.id = cs.subject_id WHERE cs.class_id IN ({format_strings}) AND cs.is_active=1",
-                                    tuple(class_ids)
-                                )
-                                subjects_data = cursor.fetchall()
-                                all_subjects = [subj['subject_name'] for subj in subjects_data]
-                            
                             # Fetch existing marks for this student
                             cursor.execute(
                                 "SELECT subject, marks FROM marks WHERE users_id=%s",
@@ -1211,17 +1227,12 @@ def search_result():
                             )
                             marks_data = cursor.fetchall()
                             
-                            # Create results dict with all subjects
-                            for subject in all_subjects:
-                                # Check if marks exist for this subject
-                                mark_entry = next((m for m in marks_data if m['subject'] == subject), None)
-                                if mark_entry:
-                                    results[subject] = mark_entry['marks']
-                                else:
-                                    results[subject] = 'Not uploaded'
+                            # Create results dict with marks
+                            for mark in marks_data:
+                                results[mark['subject']] = mark['marks']
                             
-                            if not all_subjects:
-                                msg = 'No subjects found for this student\'s class'
+                            if not results:
+                                msg = 'No marks found for this student'
                         else:
                             msg = 'Student not found with this roll number!'
                     
