@@ -58,7 +58,7 @@ db_config = {
     'user': app.config['DB_USER'],
     'password': app.config['DB_PASSWORD'],
     'database': app.config['DB_NAME'],
-    'port': int(os.getenv('DB_PORT', 3306)),
+    'port': app.config['DB_PORT'],  # Use config value (already converted to int)
     'pool_name': 'srms_pool',
     'pool_size': 5,
     'pool_reset_session': True
