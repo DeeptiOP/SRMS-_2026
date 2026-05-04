@@ -58,18 +58,25 @@ db_config = {
     'user': app.config['DB_USER'],
     'password': app.config['DB_PASSWORD'],
     'database': app.config['DB_NAME'],
-    'port': int(os.getenv('DB_PORT', 3306)),
+    'port': int(app.config['DB_PORT']),  # Explicitly convert to int
     'pool_name': 'srms_pool',
     'pool_size': 5,
     'pool_reset_session': True
 }
 
+# Debug: Print config values
+logger.info(f"DB_HOST: {app.config['DB_HOST']} (type: {type(app.config['DB_HOST'])})")
+logger.info(f"DB_PORT: {app.config['DB_PORT']} (type: {type(app.config['DB_PORT'])})")
+logger.info(f"DB_USER: {app.config['DB_USER']} (type: {type(app.config['DB_USER'])})")
+
 # Create connection pool
 try:
     connection_pool = MySQLConnectionPool(**db_config)
     logger.info("Database connection pool created successfully")
+    logger.info(f"Database config: host={db_config['host']}, port={db_config['port']}, database={db_config['database']}")
 except Error as e:
     logger.error(f"Database connection pool error: {e}")
+    logger.error(f"Connection config: host={db_config.get('host')}, port={db_config.get('port')}, user={db_config.get('user')}, database={db_config.get('database')}")
     connection_pool = None
 
 def get_db_connection():
@@ -341,8 +348,8 @@ def register():
                 (username, hashed_password, email, roll_number, course, year, department, 0)
             )
             conn.commit()
-            msg = 'Registered successfully! Please log in.'
-            return render_template('register.html', msg=msg)
+            flash('Registered successfully! Please log in.', 'success')
+            return redirect(url_for('index', username=username))
         
         except Error as e:
             logger.error(f"Registration error: {e}")
@@ -627,7 +634,7 @@ def logout():
 @app.route('/profile')
 @login_required
 def profile():
-    """View and edit user profile"""
+    """View and edit user profile with results details"""
     users_id = session.get('users_id')
     
     conn = get_db_connection()
@@ -649,7 +656,42 @@ def profile():
             flash('User not found.', 'danger')
             return redirect(url_for('index'))
         
-        return render_template('profile.html', user=user)
+        # Fetch student marks
+        cursor.execute("SELECT subject, marks FROM marks WHERE users_id=%s ORDER BY subject ASC", (users_id,))
+        marks_data = cursor.fetchall()
+        
+        results = {}
+        total_marks = 0
+        num_subjects = 0
+        
+        for mark in marks_data:
+            results[mark['subject']] = mark['marks']
+            total_marks += mark['marks']
+            num_subjects += 1
+        
+        percentage = round(total_marks / num_subjects, 2) if num_subjects > 0 else 0
+        
+        # Calculate grade
+        if percentage >= 90:
+            grade = 'A+'
+        elif percentage >= 80:
+            grade = 'A'
+        elif percentage >= 70:
+            grade = 'B+'
+        elif percentage >= 60:
+            grade = 'B'
+        elif percentage >= 50:
+            grade = 'C'
+        else:
+            grade = 'F'
+        
+        return render_template('profile.html', 
+                             user=user, 
+                             results=results,
+                             total_marks=total_marks,
+                             num_subjects=num_subjects,
+                             percentage=percentage,
+                             grade=grade)
     
     except Error as e:
         logger.error(f"Profile page error: {e}")
@@ -1179,20 +1221,18 @@ def search_result():
                         student = cursor.fetchone()
                         
                         if student:
+                            # Fetch existing marks for this student
                             cursor.execute(
-                                "SELECT subject, marks FROM marks WHERE users_id=%s ORDER BY subject ASC",
+                                "SELECT subject, marks FROM marks WHERE users_id=%s",
                                 (student['id'],)
                             )
                             marks_data = cursor.fetchall()
                             
-                            total_marks = 0
-                            num_subjects = 0
-                            for row in marks_data:
-                                results[row['subject']] = row['marks']
-                                total_marks += row['marks']
-                                num_subjects += 1
+                            # Create results dict with marks
+                            for mark in marks_data:
+                                results[mark['subject']] = mark['marks']
                             
-                            if num_subjects == 0:
+                            if not results:
                                 msg = 'No marks found for this student'
                         else:
                             msg = 'Student not found with this roll number!'
