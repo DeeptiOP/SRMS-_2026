@@ -190,14 +190,14 @@ GROUP BY u.id, u.username, u.roll_number, u.department;
 
 CREATE OR REPLACE VIEW department_stats AS
 SELECT
-    department,
+    u.department,
     COUNT(DISTINCT u.id) as total_students,
     ROUND(AVG(m.marks), 2) as avg_department_marks,
     COUNT(m.id) as total_marks_entries
 FROM users u
 LEFT JOIN marks m ON u.id = m.users_id
 WHERE u.is_admin = 0
-GROUP BY department;
+GROUP BY u.department;
 
 CREATE OR REPLACE VIEW subject_stats AS
 SELECT

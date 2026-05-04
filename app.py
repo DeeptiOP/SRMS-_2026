@@ -133,10 +133,10 @@ def index():
     msg = ''
     
     if request.method == 'POST':
+        print('LOGIN ROUTE: request.form=', request.form)
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '').strip()
         role = request.form.get('role', 'student')
-        
         # Validate input
         if not username or not password:
             flash('Username and password are required', 'danger')
@@ -164,21 +164,15 @@ def index():
                     session['users_id'] = user['id']
                     session['is_admin'] = user.get('is_admin', 0)
                     
-                    # Check if role matches user's actual role
-                    if role == 'admin' and not user.get('is_admin', 0):
-                        flash('You are not registered as admin.', 'warning')
-                        session.clear()
-                        return redirect(url_for('index'))
-                    if role == 'student' and user.get('is_admin', 0):
-                        flash('You are not registered as student.', 'warning')
-                        session.clear()
-                        return redirect(url_for('index'))
-                    
-                    # Redirect based on actual role
+                    # Redirect based on actual role, not button selection
                     if user.get('is_admin', 0):
+                        if role != 'admin':
+                            flash('Logged in as admin even though Student was selected.', 'info')
                         flash(f'Welcome Admin {username}!', 'success')
                         return redirect(url_for('admin'))
                     else:
+                        if role == 'admin':
+                            flash('Logged in as student even though Admin was selected.', 'info')
                         flash(f'Welcome {username}!', 'success')
                         return redirect(url_for('dashboard'))
                 else:

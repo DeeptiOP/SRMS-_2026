@@ -97,7 +97,7 @@
                 {% endwith %}
             </div>
 
-            <form action="/index" method="post" class="form show" id="loginForm">
+            <form action="{{ url_for('index') }}" method="post" class="form show" id="loginForm">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" id="roleInput" name="role" value="student">
                 <div class="form-group">
