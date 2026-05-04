@@ -14,23 +14,26 @@
     </div>
 
     <div class="split-container">
+        {% set shared_flash_messages = get_flashed_messages(with_categories=true, category_filter=["error","danger","warning","info","success"]) %}
         <div class="panel search-panel active" id="searchPanel">
             <h2 class="panel-title"><i class="fas fa-search"></i> Search Results</h2>
             <p class="panel-subtitle">Search by roll number to view student records, results, and academic details quickly.</p>
 
             <div class="search-form">
-                <form method="POST" id="searchForm">
+                <form action="{{ url_for('index') }}" method="POST" id="searchForm">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="search_action" value="1">
                     <div class="form-group">
                         <label for="roll_number"><i class="fas fa-id-card"></i> Roll Number</label>
-                        <input type="text" id="roll_number" name="roll_number" placeholder="e.g., STU001" required>
+                        <input type="text" id="roll_number" name="roll_number" placeholder="e.g., STU001" value="{{ request.form.get('roll_number', '') }}" required>
                     </div>
                     <button type="submit" class="btn-search"><i class="fas fa-search"></i> Search Results</button>
                 </form>
             </div>
 
-            <div class="alert alert-danger" id="searchAlert"></div>
-            <div class="alert alert-info" id="successAlert"></div>
+            <div class="alert {% if msg or shared_flash_messages %}alert-{{ msg_type or (shared_flash_messages[0][0] if shared_flash_messages else 'info') }} show{% endif %}" id="searchAlert" role="alert" aria-live="polite">
+                {{ msg or (shared_flash_messages[0][1] if shared_flash_messages else '') }}
+            </div>
 
             <div class="student-info" id="studentInfo">
                 <h3><i class="fas fa-user-graduate"></i> Student Information</h3>
@@ -88,15 +91,13 @@
                 <button type="button" class="toggle-btn" id="adminToggle" onclick="toggleRole('admin')"><i class="fas fa-user-shield"></i> Admin</button>
             </div>
 
-            <div class="flash-message alert alert-danger" id="flushMessages">
-                {% with messages = get_flashed_messages(category_filter=["error", "danger", "warning", "success"]) %}
-                    {% if messages %}
-                        {% for message in messages %}
-                            <p>{{ message }}</p>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-            </div>
+            {% if shared_flash_messages %}
+                <div class="flash-message alert alert-{{ shared_flash_messages[0][0] }}" id="flushMessages">
+                    {% for category, message in shared_flash_messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
 
             <form action="{{ url_for('index') }}" method="post" class="form show" id="loginForm">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -216,43 +217,6 @@
             }
         }
 
-        searchForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const rollNumber = document.getElementById('roll_number').value.trim();
-            if (!rollNumber) {
-                showSearchAlert('Please enter a roll number!', 'danger');
-                return;
-            }
-            const formData = new FormData();
-            formData.append('roll_number', rollNumber);
-            formData.append('csrf_token', document.querySelector('input[name="csrf_token"]').value);
-            try {
-                const response = await fetch('{{ url_for("search_result") }}', {
-                    method: 'POST',
-                    body: formData,
-                });
-                const html = await response.text();
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const errorMsg = doc.querySelector('.alert-danger')?.textContent.trim();
-                const infoMsg = doc.querySelector('.alert-info')?.textContent.trim();
-                if (errorMsg && errorMsg.toLowerCase().includes('not found')) {
-                    showSearchAlert(errorMsg, 'danger');
-                    document.getElementById('studentInfo').classList.remove('show');
-                    document.getElementById('resultsSection').classList.remove('show');
-                } else {
-                    showSearchAlert('', 'success');
-                    populateStudentInfo(doc);
-                    populateResults(doc);
-                    if (infoMsg && infoMsg.toLowerCase().includes('no marks')) {
-                        document.getElementById('resultsSection').classList.remove('show');
-                        showSearchAlert(infoMsg, 'info');
-                    }
-                }
-            } catch (error) {
-                showSearchAlert('An error occurred. Please try again.', 'danger');
-            }
-        });
     </script>
 
     <footer>

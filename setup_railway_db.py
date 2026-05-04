@@ -214,6 +214,7 @@ def initialize_database():
         # Sample students (with hashed passwords)
         hashed_password = 'pbkdf2:sha256:600000$gupZ7NnYV7tFpfQM$a93fa09b6f4da31bc1c6e8dac6d73dc124f4f9a9b0b4f57c5daae03f1c7cb735'
         students_data = [
+            ('admin', hashed_password, 'admin@srms.com', None, None, None, None, 1),
             ('pragyan', hashed_password, 'pragyan1@srms.com', '202500017', 'B.Tech', '1st Year', 'Computer Science', 0),
             ('priyanka', hashed_password, 'priyanka@srms.com', '202200013', 'B.Tech', '2nd Year', 'Computer Science', 0),
             ('swatee', hashed_password, 'swatee3@srms.com', '202100035', 'B.Tech', '3rd Year', 'Electronics', 0),

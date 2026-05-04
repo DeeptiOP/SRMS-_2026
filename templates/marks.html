@@ -38,8 +38,12 @@
                 
                 <div class="form-group">
                     <label for="username">👤 Student Username:</label>
-                    <input type="text" id="username" name="username" value="{{ username }}" required readonly 
-                           placeholder="Student username will appear here">
+                    <select id="username" name="username" required>
+                        <option value="">-- Select Student --</option>
+                        {% for student in all_students %}
+                        <option value="{{ student.username }}" {% if student.username == username %}selected{% endif %}>{{ student.username }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
 
                 <div class="form-row">
@@ -122,67 +126,57 @@
 
         {% if not username %}
             <div class="info-box">
-                <p><i class="fas fa-info-circle"></i> Select a student from the admin dashboard to add/edit their marks.</p>
+                <p><i class="fas fa-info-circle"></i> Select a student from the dropdown above to add/edit their marks.</p>
             </div>
         {% endif %}
     </div>
 
     <script>
-        const subjects = {
-            "Computer Science": {
-                "1st Year": ["Discrete Mathematics", "Basic Electrical Electronics", "English", "Basic Mechanical Engineering", "Physics", "Computer Programming"],
-                "2nd Year": ["Data Structures", "Object Oriented Programming Language", "Digital Logic Design", "Computer Organization And Architecture", "Mathematics II", "Data Communication"],
-                "3rd Year": ["Operating Systems", "Database Management Systems", "Software Engineering", "Cloud Computing", "Formal Languages and Automata Theory", "Artificial Intelligence And Machine Learning"],
-                "4th Year": ["Cyber Law And Ethics", "Entrepreneurship Development", "Renewable Power And Generation Systems", "Green Technology", "Internet Of Things", "Minor Project"]
-            },
-            "Mechanical": {
-                "1st Year": ["Engineering Mechanics", "Mathematics I", "Engineering Drawing", "CAD", "Manufacturing Technology"],
-                "2nd Year": ["Thermodynamics", "Fluid Mechanics", "Mechanics of Machines", "Electrical and Electronics", "Workshop Practice"],
-                "3rd Year": ["Machine Design", "Heat Transfer", "Manufacturing Process", "Metrology", "Theory of Machines"],
-                "4th Year": ["Automobile Engineering", "Robotics", "Control Systems", "Refrigeration and Air Conditioning", "Power Plant Engineering"]
-            },
-            "Civil": {
-                "1st Year": ["Engineering Drawing", "Mathematics I", "Engineering Mechanics", "Surveying", "Materials Testing"],
-                "2nd Year": ["Structural Analysis", "Geotechnical Engineering", "Hydraulics", "Reinforced Concrete Design", "Transportation Engineering"],
-                "3rd Year": ["Advanced Structural Design", "Foundation Engineering", "Water Resources Engineering", "Environmental Engineering", "Construction Management"],
-                "4th Year": ["Bridge Engineering", "Earthquake Engineering", "Smart Cities", "Advanced Concrete Technology", "Project Management"]
-            },
-            "Electrical": {
-                "1st Year": ["Basic Electrical", "Mathematics I", "Circuit Theory", "Physics", "Engineering Drawing"],
-                "2nd Year": ["Electromagnetics", "Electrical Machines I", "Power Systems I", "Analog Electronics", "Network Analysis"],
-                "3rd Year": ["Power Systems II", "Control Systems", "Electrical Machines II", "Power Electronics", "Utilization of Electrical Energy"],
-                "4th Year": ["Electrical Machines III", "Power System Protection", "High Voltage Engineering", "Modern Power Systems", "Industrial Control Systems"]
-            }
-        };
-
-        window.onload = function() {
-            const dept = "{{ department|trim }}";
-            const year = "{{ year|trim }}";
-            loadSubjects(dept, year);
-        };
-
-        function loadSubjects(dept, year) {
-            const subjSelect = document.getElementById('subject');
-            subjSelect.innerHTML = '<option value="">-- Select Subject --</option>';
-            
-            const normalizedYear = normalizeYear(year);
-            const yearKey = subjects[dept] && subjects[dept][year] ? year : normalizedYear;
-
-            if(subjects[dept] && subjects[dept][yearKey]) {
-                subjects[dept][yearKey].forEach(subj => {
-                    subjSelect.innerHTML += `<option value="${subj}">${subj}</option>`;
+        document.getElementById('username').addEventListener('change', function() {
+            const username = this.value;
+            const departmentField = document.getElementById('department');
+            const yearField = document.getElementById('year');
+            const subjectSelect = document.getElementById('subject');
+            if (username) {
+                fetch(`/get_user_info?username=${encodeURIComponent(username)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        departmentField.value = '';
+                        yearField.value = '';
+                        subjectSelect.innerHTML = '<option value="">-- Select Subject --</option>';
+                    } else {
+                        departmentField.value = data.department;
+                        yearField.value = data.year;
+                        subjectSelect.innerHTML = '<option value="">-- Select Subject --</option>';
+                        data.subjects.forEach(subject => {
+                            const option = document.createElement('option');
+                            option.value = subject;
+                            option.textContent = subject;
+                            subjectSelect.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching user info:', error);
+                    departmentField.value = '';
+                    yearField.value = '';
+                    subjectSelect.innerHTML = '<option value="">-- Select Subject --</option>';
                 });
+            } else {
+                departmentField.value = '';
+                yearField.value = '';
+                subjectSelect.innerHTML = '<option value="">-- Select Subject --</option>';
             }
-        }
+        });
 
-        function normalizeYear(year) {
-            const normalized = year.toLowerCase().replace(/\s+/g, '');
-            if (normalized.startsWith('1st')) return '1st Year';
-            if (normalized.startsWith('2nd')) return '2nd Year';
-            if (normalized.startsWith('3rd')) return '3rd Year';
-            if (normalized.startsWith('4th')) return '4th Year';
-            return year;
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const usernameSelect = document.getElementById('username');
+            if (usernameSelect && usernameSelect.value) {
+                usernameSelect.dispatchEvent(new Event('change'));
+            }
+        });
 
         function deleteMark(markId) {
             if (confirm('Are you sure you want to delete this mark?')) {

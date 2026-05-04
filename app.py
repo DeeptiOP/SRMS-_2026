@@ -138,8 +138,53 @@ def admin_required(f):
 def index():
     """Login page for students and admins"""
     msg = ''
+    msg_type = 'info'
     
     if request.method == 'POST':
+        if request.form.get('search_action'):
+            roll_number = request.form.get('roll_number', '').strip()
+            if not roll_number:
+                msg = 'Please enter a roll number!'
+                msg_type = 'warning'
+                flash(msg, msg_type)
+                return render_template('index.html', msg=msg, msg_type=msg_type)
+
+            conn = get_db_connection()
+            if not conn:
+                msg = 'Database connection error. Please try again.'
+                msg_type = 'danger'
+                flash(msg, msg_type)
+                return render_template('index.html', msg=msg, msg_type=msg_type)
+
+            cursor = get_cursor(conn)
+            if not cursor:
+                msg = 'Database connection error. Please try again.'
+                msg_type = 'danger'
+                flash(msg, msg_type)
+                conn.close()
+                return render_template('index.html', msg=msg, msg_type=msg_type)
+
+            try:
+                cursor.execute(
+                    "SELECT id FROM users WHERE roll_number=%s AND is_admin=0",
+                    (roll_number,)
+                )
+                student = cursor.fetchone()
+                if not student:
+                    msg = 'There is no entry in this roll id'
+                    msg_type = 'warning'
+                    flash(msg, msg_type)
+                    return render_template('index.html', msg=msg, msg_type=msg_type)
+                return redirect(url_for('search_result', roll_number=roll_number))
+            except Error as e:
+                logger.error(f"Search redirect error: {e}")
+                msg = 'An error occurred while searching. Please try again.'
+                msg_type = 'danger'
+                return render_template('index.html', msg=msg, msg_type=msg_type)
+            finally:
+                cursor.close()
+                conn.close()
+
         print('LOGIN ROUTE: request.form=', request.form)
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '').strip()
@@ -167,25 +212,27 @@ def index():
             if user:
                 # Check password using hashing
                 if check_password_hash(user['password'], password):
+                    # Check if selected role matches actual role
+                    user_is_admin = user.get('is_admin', 0)
+                    if (user_is_admin and role != 'admin') or (not user_is_admin and role == 'admin'):
+                        flash('Please select the correct role: Admin or Student.', 'warning')
+                        return redirect(url_for('index'))
+                    
                     session['username'] = user['username']
                     session['users_id'] = user['id']
-                    session['is_admin'] = user.get('is_admin', 0)
+                    session['is_admin'] = user_is_admin
                     
-                    # Redirect based on actual role, not button selection
-                    if user.get('is_admin', 0):
-                        if role != 'admin':
-                            flash('Logged in as admin even though Student was selected.', 'info')
+                    # Redirect based on role
+                    if user_is_admin:
                         flash(f'Welcome Admin {username}!', 'success')
                         return redirect(url_for('admin'))
                     else:
-                        if role == 'admin':
-                            flash('Logged in as student even though Admin was selected.', 'info')
                         flash(f'Welcome {username}!', 'success')
                         return redirect(url_for('dashboard'))
                 else:
-                    flash('Invalid password. Please try again.', 'danger')
+                    flash('User ID or password is incorrect. Please try again.', 'danger')
             else:
-                flash('Username not found. Please register or check your username.', 'danger')
+                flash('User ID or password is incorrect. Please try again.', 'danger')
         
         except Error as e:
             logger.error(f"Login error: {e}")
@@ -194,7 +241,7 @@ def index():
             cursor.close()
             conn.close()
     
-    return render_template('index.html', msg=msg)
+    return render_template('index.html', msg=msg, msg_type=msg_type)
 
 @app.route('/dashboard')
 @login_required
@@ -219,7 +266,7 @@ def dashboard():
     
     try:
         # Fetch student info from users table
-        cursor.execute("SELECT username, email, course, year, department FROM users WHERE id = %s", (users_id,))
+        cursor.execute("SELECT username, email, course, year, department, roll_number FROM users WHERE id = %s", (users_id,))
         student = cursor.fetchone()
         
         if not student:
@@ -262,6 +309,7 @@ def dashboard():
                                course=student['course'],
                                year=student['year'],
                                department=student['department'],
+                               roll_number=student['roll_number'],
                                results=results,
                                total_marks=total_marks,
                                num_subjects=num_subjects,
@@ -419,6 +467,7 @@ def marks():
     year = ''
     users_id = None
     student_marks = []
+    all_students = []
     
     conn = get_db_connection()
     if not conn:
@@ -432,6 +481,10 @@ def marks():
         return redirect(url_for('admin'))
     
     try:
+        # Fetch all students for dropdown
+        cursor.execute("SELECT username FROM users WHERE is_admin=0 ORDER BY username")
+        all_students = cursor.fetchall()
+        
         if username:
             cursor.execute("SELECT id, department, year FROM users WHERE username=%s AND is_admin=0", (username,))
             user_info = cursor.fetchone()
@@ -513,7 +566,80 @@ def marks():
                            username=username, 
                            department=department, 
                            year=year,
-                           student_marks=student_marks)
+                           student_marks=student_marks,
+                           all_students=all_students)
+
+def normalize_year(year):
+    """Normalize year formats like '2nd', '2nd Year', '4th', etc."""
+    if year is None:
+        return ''
+    year_str = str(year).strip().lower()
+    if year_str.startswith('1st'):
+        return '1st Year'
+    if year_str.startswith('2nd'):
+        return '2nd Year'
+    if year_str.startswith('3rd'):
+        return '3rd Year'
+    if year_str.startswith('4th'):
+        return '4th Year'
+    if year_str.isdigit():
+        return f"{year_str}th Year"
+    return str(year).strip()
+
+@app.route('/get_user_info')
+@admin_required
+def get_user_info():
+    """Get user department, year and subject list via AJAX"""
+    username = request.args.get('username', '').strip()
+    if not username:
+        return jsonify({'error': 'Username required'}), 400
+    
+    subject_mapping = {
+        'Computer Science': {
+            '1st Year': ['Discrete Mathematics', 'Basic Electrical Electronics', 'English', 'Basic Mechanical Engineering', 'Physics', 'Computer Programming'],
+            '2nd Year': ['Data Structures', 'Object Oriented Programming Language', 'Digital Logic Design', 'Computer Organization And Architecture', 'Mathematics II', 'Data Communication'],
+            '3rd Year': ['Operating Systems', 'Database Management Systems', 'Software Engineering', 'Cloud Computing', 'Formal Languages and Automata Theory', 'Artificial Intelligence And Machine Learning'],
+            '4th Year': ['Cyber Law And Ethics', 'Entrepreneurship Development', 'Renewable Power And Generation Systems', 'Green Technology', 'Internet Of Things', 'Minor Project']
+        },
+        'Electronics': {
+            '1st Year': ['Engineering Physics', 'Circuit Theory', 'Digital Electronics', 'Electronic Devices', 'Mathematics III'],
+            '2nd Year': ['Signals and Systems', 'Microprocessors', 'Analog Electronics', 'Network Theory', 'Control Systems'],
+            '3rd Year': ['Communication Systems', 'Embedded Systems', 'VLSI Design', 'Power Electronics', 'Electromagnetics'],
+            '4th Year': ['Digital Signal Processing', 'Wireless Communication', 'Optical Electronics', 'Industrial Electronics', 'Project Work']
+        },
+        'Mechanical': {
+            '1st Year': ['Engineering Mechanics', 'Mathematics I', 'Engineering Drawing', 'CAD', 'Manufacturing Technology'],
+            '2nd Year': ['Thermodynamics', 'Fluid Mechanics', 'Mechanics of Machines', 'Electrical and Electronics', 'Workshop Practice'],
+            '3rd Year': ['Machine Design', 'Heat Transfer', 'Manufacturing Process', 'Metrology', 'Theory of Machines'],
+            '4th Year': ['Automobile Engineering', 'Robotics', 'Control Systems', 'Refrigeration and Air Conditioning', 'Power Plant Engineering']
+        },
+        'Information Technology': {
+            '1st Year': ['Computer Fundamentals', 'Mathematics I', 'Digital Logic', 'Programming Concepts', 'Physics'],
+            '2nd Year': ['Data Structures', 'Database Management', 'Web Development', 'Computer Networks', 'Software Engineering'],
+            '3rd Year': ['Operating Systems', 'Mobile Application Development', 'Cloud Computing', 'Cyber Security', 'Artificial Intelligence'],
+            '4th Year': ['Data Mining', 'Internet of Things', 'Machine Learning', 'Big Data Analytics', 'Project Work']
+        }
+    }
+
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({'error': 'Database connection error'}), 500
+    
+    cursor = get_cursor(conn)
+    try:
+        cursor.execute("SELECT department, year FROM users WHERE username=%s AND is_admin=0", (username,))
+        user = cursor.fetchone()
+        if user:
+            department = user['department']
+            year = normalize_year(user['year'])
+            subjects = subject_mapping.get(department, {}).get(year, [])
+            return jsonify({'department': department, 'year': year, 'subjects': subjects})
+        else:
+            return jsonify({'error': 'User not found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
 
 @app.route('/delete_mark/<int:mark_id>', methods=['POST'])
 @admin_required
@@ -720,24 +846,36 @@ def classes():
     
     try:
         if request.method == 'POST':
-            class_name = request.form.get('class_name', '').strip()
-            description = request.form.get('description', '').strip()
-            year = request.form.get('year', '').strip()
-            department = request.form.get('department', '').strip()
-            
-            if not class_name:
-                msg = 'Class name is required!'
-            else:
+            # Handle delete
+            delete_class_id = request.form.get('delete_class_id')
+            if delete_class_id:
                 try:
-                    cursor.execute(
-                        "INSERT INTO classes (class_name, description, year, department) VALUES (%s, %s, %s, %s)",
-                        (class_name, description, year, department)
-                    )
+                    cursor.execute("DELETE FROM classes WHERE id=%s", (delete_class_id,))
                     conn.commit()
-                    msg = f'Class "{class_name}" added successfully!'
+                    msg = 'Class deleted successfully!'
                 except Error as e:
-                    msg = 'Class name already exists!'
-                    logger.error(f"Class insert error: {e}")
+                    msg = 'Error deleting class!'
+                    logger.error(f"Delete class error: {e}")
+            else:
+                # Handle add
+                class_name = request.form.get('class_name', '').strip()
+                description = request.form.get('description', '').strip()
+                year = request.form.get('year', '').strip()
+                department = request.form.get('department', '').strip()
+                
+                if not class_name:
+                    msg = 'Class name is required!'
+                else:
+                    try:
+                        cursor.execute(
+                            "INSERT INTO classes (class_name, description, year, department) VALUES (%s, %s, %s, %s)",
+                            (class_name, description, year, department)
+                        )
+                        conn.commit()
+                        msg = f'Class "{class_name}" added successfully!'
+                    except Error as e:
+                        msg = 'Class name already exists!'
+                        logger.error(f"Class insert error: {e}")
         
         # Fetch all classes
         cursor.execute("SELECT id, class_name, description, year, department FROM classes ORDER BY class_name ASC")
@@ -796,23 +934,35 @@ def subjects():
     
     try:
         if request.method == 'POST':
-            subject_name = request.form.get('subject_name', '').strip()
-            subject_code = request.form.get('subject_code', '').strip()
-            description = request.form.get('description', '').strip()
-            
-            if not subject_name:
-                msg = 'Subject name is required!'
-            else:
+            # Handle delete
+            delete_subject_id = request.form.get('delete_subject_id')
+            if delete_subject_id:
                 try:
-                    cursor.execute(
-                        "INSERT INTO subjects (subject_name, subject_code, description) VALUES (%s, %s, %s)",
-                        (subject_name, subject_code, description)
-                    )
+                    cursor.execute("DELETE FROM subjects WHERE id=%s", (delete_subject_id,))
                     conn.commit()
-                    msg = f'Subject "{subject_name}" added successfully!'
+                    msg = 'Subject deleted successfully!'
                 except Error as e:
-                    msg = 'Subject already exists!'
-                    logger.error(f"Subject insert error: {e}")
+                    msg = 'Error deleting subject!'
+                    logger.error(f"Delete subject error: {e}")
+            else:
+                # Handle add
+                subject_name = request.form.get('subject_name', '').strip()
+                subject_code = request.form.get('subject_code', '').strip()
+                description = request.form.get('description', '').strip()
+                
+                if not subject_name:
+                    msg = 'Subject name is required!'
+                else:
+                    try:
+                        cursor.execute(
+                            "INSERT INTO subjects (subject_name, subject_code, description) VALUES (%s, %s, %s)",
+                            (subject_name, subject_code, description)
+                        )
+                        conn.commit()
+                        msg = f'Subject "{subject_name}" added successfully!'
+                    except Error as e:
+                        msg = 'Subject already exists!'
+                        logger.error(f"Subject insert error: {e}")
         
         # Fetch all subjects
         cursor.execute("SELECT id, subject_name, subject_code, description FROM subjects ORDER BY subject_name ASC")
@@ -1197,7 +1347,49 @@ def search_result():
     msg = ''
     results = {}
     student = None
-    
+    roll_number = ''
+
+    if request.method == 'GET':
+        roll_number = request.args.get('roll_number', '').strip()
+        if roll_number:
+            if not roll_number:
+                msg = 'Please enter a roll number!'
+            else:
+                conn = get_db_connection()
+                if not conn:
+                    msg = 'Database connection error'
+                else:
+                    cursor = get_cursor(conn)
+                    if not cursor:
+                        msg = 'Database connection error'
+                        conn.close()
+                    else:
+                        try:
+                            cursor.execute(
+                                "SELECT id, username, roll_number, email, course, year, department FROM users WHERE roll_number=%s AND is_admin=0",
+                                (roll_number,)
+                            )
+                            student = cursor.fetchone()
+
+                            if student:
+                                cursor.execute(
+                                    "SELECT subject, marks FROM marks WHERE users_id=%s",
+                                    (student['id'],)
+                                )
+                                marks_data = cursor.fetchall()
+                                for mark in marks_data:
+                                    results[mark['subject']] = mark['marks']
+                                if not results:
+                                    msg = 'No marks found for this student'
+                            else:
+                                msg = 'Student not found with this roll number!'
+                        except Error as e:
+                            logger.error(f"Search result error: {e}")
+                            msg = 'An error occurred'
+                        finally:
+                            cursor.close()
+                            conn.close()
+
     if request.method == 'POST':
         roll_number = request.form.get('roll_number', '').strip()
         
@@ -1235,7 +1427,7 @@ def search_result():
                             if not results:
                                 msg = 'No marks found for this student'
                         else:
-                            msg = 'Student not found with this roll number!'
+                            msg = 'There is no entry in this roll id'
                     
                     except Error as e:
                         logger.error(f"Search result error: {e}")

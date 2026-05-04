@@ -6,135 +6,324 @@
     <title>Search Results - SRMS</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='search_result.css') }}">
     <style>
+        :root {
+            --bg: #f5f9ff;
+            --bg-card: #ffffff;
+            --bg-card-soft: #f6f9ff;
+            --text: #1f2a44;
+            --text-muted: #5f6d85;
+            --border: rgba(96, 112, 136, 0.18);
+            --primary: #4158d0;
+            --primary-soft: #6374f4;
+            --success: #16a34a;
+            --warning: #b45309;
+            --danger: #b91c1c;
+            --radius: 24px;
+            --shadow: 0 24px 64px rgba(15, 23, 42, 0.08);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: var(--text);
+            background: linear-gradient(180deg, #15203d 0%, #1b2b62 32%, #5f2405 100%);
+        }
+
         .container {
-            max-width: 900px;
+            max-width: 1080px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 32px 24px 48px;
         }
-        .search-form {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+        .page-header {
+            margin-bottom: 24px;
+            padding: 28px 32px;
+            border-radius: var(--radius);
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(18px);
+            box-shadow: 0 24px 64px rgba(15, 23, 42, 0.14);
         }
-        .form-group {
-            display: flex;
-            gap: 10px;
-            align-items: flex-end;
+
+        .page-header h1 {
+            margin: 0 0 10px;
+            font-size: clamp(2rem, 2.8vw, 3rem);
+            color: #ffffff;
+            letter-spacing: -0.04em;
         }
-        .form-group label {
-            font-weight: bold;
-            display: block;
+
+        .page-header p {
+            margin: 0;
+            max-width: 760px;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.75;
         }
-        .form-group input {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            flex: 1;
-            max-width: 300px;
-        }
-        .btn-search {
-            background: #007bff;
-            color: white;
-            padding: 8px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .btn-search:hover {
-            background: #0056b3;
-        }
-        .alert {
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-        .alert-danger {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-        .student-info {
-            background: #f0f8ff;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-left: 4px solid #007bff;
-        }
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-        }
-        .info-item {
-            background: white;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-        .info-item:hover, .info-item:active {
-            background-color: #f0f0f0;
-        }
-        .info-label {
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
-        }
-        .info-value {
-            color: #666;
-        }
-        .results-section {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        table th, table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        table th {
-            background: #007bff;
-            color: white;
-            font-weight: bold;
-        }
-        table tr:hover {
-            background: #f5f5f5;
-        }
+
         .back-link {
             margin-bottom: 20px;
         }
+
         .back-link a {
-            color: #007bff;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #ffffff;
             text-decoration: none;
+            font-weight: 600;
         }
+
         .back-link a:hover {
             text-decoration: underline;
         }
-        .no-results {
-            text-align: center;
-            padding: 40px;
-            color: #666;
+
+        .search-form,
+        .student-info,
+        .results-section {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
         }
+
+        .search-form {
+            padding: 30px;
+            margin-bottom: 24px;
+        }
+
+        .search-form .form-group {
+            display: grid;
+            gap: 14px;
+        }
+
+        .search-form label {
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .search-form input {
+            width: 100%;
+            padding: 16px 18px;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            font-size: 1rem;
+            color: var(--text);
+            background: var(--bg-card-soft);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .search-form input:focus {
+            outline: none;
+            border-color: rgba(65, 88, 208, 0.5);
+            box-shadow: 0 0 0 4px rgba(3, 13, 59, 0.12);
+        }
+
+        .search-form .btn-search {
+            width: 100%;
+            padding: 16px 18px;
+            border: none;
+            border-radius: 18px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--primary-soft));
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .search-form .btn-search:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 16px 30px rgba(65, 88, 208, 0.25);
+        }
+
+        .btn-download {
+            margin-top: 20px;
+            width: 100%;
+            padding: 16px 18px;
+            border: none;
+            border-radius: 18px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, #16a34a, #22c55e);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 16px 30px rgba(34, 197, 94, 0.25);
+        }
+
+        .alert {
+            padding: 18px 22px;
+            margin-top: 18px;
+            border-radius: 18px;
+            font-size: 1rem;
+            line-height: 1.6;
+            border: 1px solid transparent;
+        }
+
+        .alert-danger {
+            background: #fee2e2;
+            color: var(--danger);
+            border-color: #fecaca;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: var(--warning);
+            border-color: #fde68a;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1d4ed8;
+            border-color: #93c5fd;
+        }
+
+        .section-grid {
+            display: grid;
+            gap: 24px;
+        }
+
+        .student-info,
+        .results-section {
+            padding: 28px;
+        }
+
+        .student-info h2,
+        .results-section h2 {
+            margin-top: 0;
+            font-size: 1.35rem;
+            letter-spacing: -0.02em;
+            color: var(--text);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-top: 22px;
+        }
+
+        .info-item {
+            background: var(--bg-card-soft);
+            padding: 18px 16px;
+            border-radius: 20px;
+            border: 1px solid transparent;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .info-item:hover {
+            transform: translateY(-2px);
+            border-color: rgba(65, 88, 208, 0.16);
+        }
+
+        .info-label {
+            margin-bottom: 12px;
+            font-size: 0.94rem;
+            color: var(--text-muted);
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .results-section table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+            margin-top: 22px;
+        }
+
+        .results-section th,
+        .results-section td {
+            padding: 16px 18px;
+            border: none;
+        }
+
+        .results-section thead th {
+            text-transform: uppercase;
+            font-size: 0.82rem;
+            letter-spacing: 0.15em;
+            color: #334155;
+            font-weight: 700;
+            background: transparent;
+        }
+
+        .results-section tbody tr {
+            background: var(--bg-card-soft);
+            border-radius: 18px;
+            box-shadow: inset 0 0 0 1px rgba(96, 112, 136, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .results-section tbody tr:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 18px 35px rgba(15, 23, 42, 0.06);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 14px;
+            border-radius: 999px;
+            font-size: 0.92rem;
+            font-weight: 700;
+        }
+
+        .status-available {
+            color: #064e3b;
+            background: #d1fae5;
+        }
+
+        .status-missing {
+            color: #7c2d12;
+            background: #fed7aa;
+        }
+
+        .no-results {
+            background: var(--bg-card-soft);
+            padding: 34px 24px;
+            border-radius: 22px;
+            color: var(--text-muted);
+            text-align: center;
+            font-size: 1rem;
+        }
+
         .marks-summary {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 4px;
-            margin-top: 10px;
+            background: var(--bg-card-soft);
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(65, 88, 208, 0.1);
+            margin-top: 22px;
+        }
+
+        .marks-summary h3 {
+            margin: 0 0 14px;
+            font-size: 1rem;
+            color: var(--text);
+        }
+
+        .marks-summary p {
+            margin: 8px 0;
+            color: var(--text-muted);
+            line-height: 1.75;
+        }
+
+        footer {
+            margin-top: 32px;
+            color: rgba(255, 255, 255, 0.85);
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        footer a {
+            color: #dbeafe;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -144,30 +333,36 @@
             <a href="{% if session.get('is_admin') %}{{ url_for('admin') }}{% else %}{{ url_for('dashboard') }}{% endif %}">← Back</a>
         </div>
         
-        <h1>Search Student Results</h1>
-        
+        <div class="page-header">
+            <h1>Search Student Results</h1>
+            <p>Enter the student's roll number to quickly access their profile, marks, and academic summary. The interface is built to keep results clear and easy to scan.</p>
+        </div>
+
         <div class="search-form">
             <form method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="form-group">
-                    <label for="roll_number">Enter Roll Number:</label>
+                    <label for="roll_number">Roll Number</label>
                     <input type="text" id="roll_number" name="roll_number" placeholder="e.g., 001" value="{{ request.form.get('roll_number', '') }}" required>
+                </div>
+                <div class="form-group">
                     <button type="submit" class="btn-search">Search</button>
                 </div>
             </form>
-        </div>
-        
-        {% if msg %}
-            {% if 'successfully' in msg or 'found' in msg.lower() %}
-                <div class="alert alert-info">{{ msg }}</div>
-            {% else %}
-                <div class="alert alert-danger">{{ msg }}</div>
+
+            {% if msg %}
+                <div class="alert alert-{{ 'info' if 'successfully' in msg.lower() or 'found' in msg.lower() else 'warning' if 'no entry' in msg.lower() or 'not found' in msg.lower() or 'please enter' in msg.lower() or 'no marks' in msg.lower() or 'not uploaded' in msg.lower() else 'danger' }}">
+                    {{ msg }}
+                </div>
             {% endif %}
-        {% endif %}
-        
+        </div>
+
         {% if student %}
-            <div class="student-info">
-                <h2>Student Information</h2>
+            <div class="section-grid">
+                <button type="button" class="btn-download" onclick="downloadResultPdf()">Download Result as PDF</button>
+                <div id="resultContent">
+                    <div class="student-info">
+                        <h2>Student Information</h2>
                 <div class="info-grid">
                     <div class="info-item">
                         <div class="info-label">Name</div>
@@ -175,7 +370,7 @@
                     </div>
                     <div class="info-item">
                         <div class="info-label">Roll Number</div>
-                        <div class="info-value">{{ student['roll_number'] or 'N/A' }}</div>
+                        <div id="studentRollValue" class="info-value">{{ student['roll_number'] or 'N/A' }}</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Email</div>
@@ -220,9 +415,9 @@
                                     </td>
                                     <td data-label="Status">
                                         {% if marks == 'Not uploaded' %}
-                                            <span style="color: #dc3545; font-weight: bold;">Not Uploaded</span>
+                                            <span class="status-pill status-missing">Not Uploaded</span>
                                         {% else %}
-                                            <span style="color: #28a745; font-weight: bold;">Available</span>
+                                            <span class="status-pill status-available">Available</span>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -265,6 +460,8 @@
                         </div>
                     {% endif %}
                 </div>
+            </div>
+            </div>
             {% else %}
                 <div class="no-results">
                     <p>This student has not been assigned to any subjects yet.</p>
@@ -272,6 +469,52 @@
             {% endif %}
         {% endif %}
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script>
+        if (window.jspdf && !window.jsPDF) {
+            window.jsPDF = window.jspdf.jsPDF;
+        }
+
+        async function downloadResultPdf() {
+            const jsPDFConstructor = window.jsPDF || (window.jspdf && window.jspdf.jsPDF) || window.jspdf;
+            if (!jsPDFConstructor) {
+                alert('PDF library not loaded. Please refresh the page and try again.');
+                return;
+            }
+
+            if (typeof html2canvas !== 'function') {
+                alert('HTML to canvas library not loaded. Please refresh the page and try again.');
+                return;
+            }
+
+            const resultElement = document.getElementById('resultContent');
+            if (!resultElement) {
+                alert('No result content available to download.');
+                return;
+            }
+
+            try {
+                const canvas = await html2canvas(resultElement, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff'
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDFConstructor({ unit: 'pt', format: 'a4' });
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                pdf.addImage(imgData, 'PNG', 20, 20, pdfWidth - 40, pdfHeight - 40);
+                const rollNumber = document.getElementById('studentRollValue')?.textContent.trim() || 'result';
+                pdf.save(`student-result-${rollNumber}.pdf`);
+            } catch (error) {
+                console.error('PDF download failed:', error);
+                alert('Unable to generate PDF. Please try again or refresh the page.');
+            }
+        }
+    </script>
 
     <footer>
         <div class="footer-content">
